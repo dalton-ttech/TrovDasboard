@@ -2,10 +2,13 @@ import datetime as dt
 from pathlib import Path
 import sys
 import unittest
+import json
+import tempfile
+from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from ads_overview import periods, summarize, shopify_created_at_bounds
+from ads_overview import periods, summarize, shopify_created_at_bounds, compare, direction, previous_snapshot
 
 
 def order(key, created, amount='20.00', **extra):
@@ -43,6 +46,39 @@ class AdsOverviewTests(unittest.TestCase):
         self.assertEqual(result['metaRoas'],1.9)
         self.assertEqual(result['metaSpend'],100)
         self.assertIsNone(summarize(window,[],[],'example')['metaRoas'])
+
+    def test_comparison_is_one_day_shifted_with_independent_metric_directions(self):
+        for key in ('7', '30'):
+            current = {**periods(dt.date(2026,9,3))[key], 'shopifyNetSales':120, 'shopifyOrders':3, 'metaRoas':1.5}
+            previous = {**periods(dt.date(2026,9,2))[key], 'shopifyNetSales':100, 'shopifyOrders':3, 'metaRoas':2}
+            result = compare(current, previous, basis='previous_day_snapshot', observed_at='2026-09-03T12:00:00Z')
+            self.assertEqual(result['directions'], {'shopifyNetSales':'up', 'shopifyOrders':'flat', 'metaRoas':'down'})
+            self.assertEqual(result['since'], previous['since'])
+            with self.assertRaises(ValueError):
+                compare(current, {**previous, 'until':'2026-08-03'}, basis='example', observed_at='')
+
+    def test_missing_and_zero_baselines_do_not_invent_progress(self):
+        self.assertIsNone(direction(None, 1))
+        self.assertIsNone(direction(1, None))
+        self.assertIsNone(direction(float('nan'), 1))
+        self.assertEqual(direction(1, 0), 'up')
+        self.assertEqual(direction(0, 1), 'down')
+        self.assertEqual(direction(0, 0), 'flat')
+
+    def test_only_an_exact_previous_day_snapshot_is_reused(self):
+        today = dt.date(2026,9,4)
+        windows = periods(today - dt.timedelta(days=2))
+        saved = {'status':'ready', 'timezone':'America/Los_Angeles', 'adScope':['A02','A03'],
+                 'syncedAt':'2026-09-03T12:00:00Z',
+                 'periods':{key:{**window, 'status':'ready', 'currency':'USD'} for key,window in windows.items()}}
+        with tempfile.TemporaryDirectory() as folder, patch('ads_overview.ROOT', Path(folder)):
+            source = Path(folder)/'data/ads-overview-history/2026-09-03.json'
+            source.parent.mkdir(parents=True)
+            source.write_text(json.dumps(saved), encoding='utf-8')
+            self.assertEqual(previous_snapshot(today,windows)['syncedAt'],saved['syncedAt'])
+            saved['periods']['7']['until'] = '2026-09-01'
+            source.write_text(json.dumps(saved), encoding='utf-8')
+            self.assertIsNone(previous_snapshot(today,windows))
 
 
 if __name__ == '__main__':

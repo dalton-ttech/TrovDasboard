@@ -2,13 +2,21 @@
 (() => {
   'use strict';
   function adsOverview({ snapshot, period }, H) {
-    const { icon, escape: e, number, stamp, pageHeading } = H;
+    const { icon, escape: e, pageHeading, stamp } = H;
     const current = snapshot?.periods?.[period];
     const ready = snapshot?.status === 'ready' && current?.status === 'ready';
-    const sales = ready && Number.isFinite(current.shopifyNetSales) ? new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(current.shopifyNetSales) : '—';
     const range = ready ? `${current.since.slice(5).replace('-', '.')} – ${current.until.slice(5).replace('-', '.')}` : `近 ${period} 天`;
-    const control = `<label class="period-control">${icon('calendar')}<span>${e(range)}</span><select id="ads-period" aria-label="投流总览统计区间（太平洋时间）"><option value="30" ${period === '30' ? 'selected' : ''}>近 30 天</option><option value="7" ${period === '7' ? 'selected' : ''}>近 7 天</option></select>${icon('down')}</label>`;
-    return `<section class="ads-overview" aria-label="投流总览">${pageHeading('ADVERTISING OVERVIEW', '投流总览', snapshot?.syncedAt ? '上次读取 ' + e(stamp(snapshot.syncedAt)) : '上次读取 —', control)}<div class="ads-kpis" aria-live="polite"><div class="ads-kpi"><span class="ads-kpi-label">销售额</span><strong class="ads-kpi-value">${sales === '—' ? sales : '<small>$</small>' + sales}</strong><span class="ads-kpi-source">Shopify 净销售额</span></div><div class="ads-kpi"><span class="ads-kpi-label">订单量</span><strong class="ads-kpi-value">${ready ? number(current.shopifyOrders, 0) : '—'}<small>单</small></strong><span class="ads-kpi-source">Shopify 有效订单</span></div><div class="ads-kpi"><span class="ads-kpi-label">ROAS</span><strong class="ads-kpi-value">${ready ? number(current.metaRoas, 2) : '—'}<small>×</small></strong><span class="ads-kpi-source">Meta · A02 / A03</span></div></div></section>`;
+    const control = `<label class="period-control">${icon('calendar')}<span>${e(range)}</span><select id="ads-period" aria-label="销量总览统计区间（太平洋时间）"><option value="30" ${period === '30' ? 'selected' : ''}>近 30 天</option><option value="7" ${period === '7' ? 'selected' : ''}>近 7 天</option></select>${icon('down')}</label>`;
+    function metric(key, label, source, decimals, prefix = '', suffix = '') {
+      const value = ready ? current[key] : null;
+      const available = Number.isFinite(value);
+      const formatted = available ? new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value) : '—';
+      const direction = available ? current.comparison?.directions?.[key] : null;
+      const trendLabel = direction === 'up' ? '较前一日同长度区间提升' : direction === 'down' ? '较前一日同长度区间下降' : direction === 'flat' ? '与前一日同长度区间持平' : '';
+      const arrow = ['up', 'down'].includes(direction) ? `<sup class="ads-trend ${direction}" title="${trendLabel}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V2M2.5 5.5 6 2l3.5 3.5"/></svg></sup>` : '';
+      return `<div class="ads-kpi"><span class="ads-kpi-label">${label}</span><strong class="ads-kpi-value"><span class="sr-only">${e(prefix + formatted + suffix)}${trendLabel ? '，' + trendLabel : ''}</span><span class="ads-kpi-number" aria-hidden="true">${prefix ? `<small>${prefix}</small>` : ''}<span class="ads-digit-stack"><span class="ads-count-size">${formatted}</span><span class="ads-count" ${available ? `data-count-target="${value}" data-count-decimals="${decimals}"` : ''}>${formatted}</span></span>${suffix ? `<small>${suffix}</small>` : ''}${arrow}</span></strong><span class="ads-kpi-source">${source}</span></div>`;
+    }
+    return `<section class="ads-overview" aria-label="销量总览">${pageHeading('SALES OVERVIEW', '销量总览', snapshot?.syncedAt ? '上次读取 ' + e(stamp(snapshot.syncedAt)) : '上次读取 —', control)}<div class="ads-kpis">${metric('shopifyNetSales', '销售额', 'Shopify 净销售额', 2, '$')}${metric('shopifyOrders', '订单量', 'Shopify 有效订单', 0, '', '单')}${metric('metaRoas', 'ROAS', 'Meta · A02 / A03', 2, '', '×')}</div></section>`;
   }
   const period = r => r.since === r.until ? r.since.replaceAll('-', '.') : r.since.replaceAll('-', '.') + ' — ' + r.until.slice(5).replace('-', '.');
   const kindName = kind => kind === 'weekly' ? '周报' : '日报';

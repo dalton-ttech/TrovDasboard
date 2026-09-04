@@ -7,6 +7,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import math
 from pathlib import Path
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -25,6 +26,54 @@ from trov_time import pacific_now, PACIFIC_NAME
 
 def periods(end: dt.date):
     return {str(days): {'days': days, 'since': (end - dt.timedelta(days=days-1)).isoformat(), 'until': end.isoformat()} for days in (30, 7)}
+
+
+METRICS = ('shopifyNetSales', 'shopifyOrders', 'metaRoas')
+
+
+def direction(current, previous):
+    if any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) for value in (current, previous)):
+        return None
+    if math.isclose(current, previous, rel_tol=0, abs_tol=1e-9):
+        return 'flat'
+    return 'up' if current > previous else 'down'
+
+
+def compare(current, previous, *, basis, observed_at):
+    # One-day-shifted rolling window, never the preceding non-overlapping 7/30 days.
+    if current['days'] != previous['days'] or any(
+        dt.date.fromisoformat(current[key]) - dt.date.fromisoformat(previous[key]) != dt.timedelta(days=1)
+        for key in ('since', 'until')
+    ):
+        raise ValueError('The comparison must be the same window shifted by one Pacific date')
+    return {
+        'since': previous['since'], 'until': previous['until'], 'basis': basis,
+        'observedAt': observed_at,
+        'values': {key: previous.get(key) for key in METRICS},
+        'directions': {key: direction(current.get(key), previous.get(key)) for key in METRICS},
+    }
+
+
+def previous_snapshot(today, ranges):
+    source = ROOT / 'data' / 'ads-overview-history' / f'{today - dt.timedelta(days=1)}.json'
+    try:
+        saved = json.loads(source.read_text(encoding='utf-8'))
+        if saved.get('status') != 'ready' or saved.get('timezone') != PACIFIC_NAME or saved.get('adScope') != ['A02', 'A03']:
+            return None
+        for key, window in ranges.items():
+            record = saved['periods'][key]
+            if record.get('status') != 'ready' or record.get('currency') != 'USD' or any(record.get(field) != window[field] for field in ('days', 'since', 'until')):
+                return None
+        return saved
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def save_json(output, result):
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.with_suffix('.tmp')
+    temporary.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    temporary.replace(output)
 
 
 def summarize(period, orders, metrics, campaign):
@@ -57,24 +106,37 @@ def sync():
     ad_ids = [str((state.get('ads', {}).get(key) or {}).get('ad_id') or '') for key in ('A02', 'A03')]
     if not all(ad_ids):
         raise RuntimeError('A02/A03 configuration is incomplete')
-    ranges = periods(pacific_now().date() - dt.timedelta(days=1))
+    today = pacific_now().date()
+    ranges = periods(today - dt.timedelta(days=1))
+    previous_ranges = periods(today - dt.timedelta(days=2))
+    saved = previous_snapshot(today, previous_ranges)
+    requested = {f'current-{key}': value for key, value in ranges.items()}
+    if not saved:
+        requested.update({f'previous-{key}': value for key, value in previous_ranges.items()})
     shop, token = shopify_token()
-    start, stop = shopify_created_at_bounds(ranges['30']['since'], ranges['30']['until'])
+    start, stop = shopify_created_at_bounds(min(p['since'] for p in requested.values()), ranges['30']['until'])
     with ThreadPoolExecutor(max_workers=3) as pool:
         order_job = pool.submit(fetch_shopify_orders, shop, token, start, stop)
-        metric_jobs = {key: [pool.submit(get_meta_ad_metrics, meta_token, ad, period['since'], period['until']) for ad in ad_ids] for key, period in ranges.items()}
+        metric_jobs = {key: [pool.submit(get_meta_ad_metrics, meta_token, ad, period['since'], period['until']) for ad in ad_ids] for key, period in requested.items()}
         orders = order_job.result()
-        results = {key: summarize(period, orders, [job.result() for job in metric_jobs[key]], config['campaign']['name']) for key, period in ranges.items()}
+        summaries = {key: summarize(period, orders, [job.result() for job in metric_jobs[key]], config['campaign']['name']) for key, period in requested.items()}
+    synced_at = dt.datetime.now(dt.timezone.utc).isoformat()
+    results = {}
+    for key in ranges:
+        current = summaries[f'current-{key}']
+        previous = saved['periods'][key] if saved else summaries[f'previous-{key}']
+        results[key] = {**current, 'comparison': compare(current, previous,
+            basis='previous_day_snapshot' if saved else 'recomputed_previous_window',
+            observed_at=saved['syncedAt'] if saved else synced_at)}
     result = {
-        'status': 'ready', 'syncedAt': dt.datetime.now(dt.timezone.utc).isoformat(),
+        'status': 'ready', 'syncedAt': synced_at, 'calculatedForDate': today.isoformat(),
         'timezone': PACIFIC_NAME, 'completeDaysOnly': True, 'adScope': ['A02', 'A03'],
         'periods': results, 'writesPerformed': False,
     }
-    output = ROOT / 'data' / 'ads-overview.json'
-    output.parent.mkdir(exist_ok=True)
-    temporary = output.with_suffix('.tmp')
-    temporary.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    temporary.replace(output)
+    # Keep daily calculation results so future arrows compare with yesterday's actual snapshot.
+    archive = {**result, 'periods': {key: {field: value for field, value in period.items() if field != 'comparison'} for key, period in results.items()}}
+    save_json(ROOT / 'data' / 'ads-overview-history' / f'{today}.json', archive)
+    save_json(ROOT / 'data' / 'ads-overview.json', result)
     return result
 
 

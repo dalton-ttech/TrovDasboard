@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check public/app.js && node --check public/workspace.js && node --check public/logistics-model.js && node --check public/pacific-clock.js && node --test tests/logistics-model.test.mjs tests/pacific-clock.test.mjs"
+    "check": "node --check server.mjs && node --check public/app.js && node --check public/workspace.js && node --check public/logistics-model.js && node --check public/pacific-clock.js && node --check public/ads-motion.js && node --test tests/logistics-model.test.mjs tests/pacific-clock.test.mjs tests/ads-motion.test.mjs"
   },
   "engines": { "node": ">=18" }
 }

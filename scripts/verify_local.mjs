@@ -15,6 +15,13 @@ assert.equal(ads.periods['30'].until,ads.periods['7'].until);
 for (const [key,p] of Object.entries(ads.periods)) {
   assert.equal((Date.parse(p.until)-Date.parse(p.since))/86400000+1,Number(key));
   assert.equal(p.metaRoas,p.metaSpend>0?p.metaPurchaseValue/p.metaSpend:null);
+  assert.equal(Date.parse(p.since)-Date.parse(p.comparison.since),86400000);
+  assert.equal(Date.parse(p.until)-Date.parse(p.comparison.until),86400000);
+  for (const key of ['shopifyNetSales','shopifyOrders','metaRoas']) {
+    const previous=p.comparison.values[key], current=p[key];
+    const expected=!Number.isFinite(previous)||!Number.isFinite(current)?null:Math.abs(current-previous)<=1e-9?'flat':current>previous?'up':'down';
+    assert.equal(p.comparison.directions[key],expected);
+  }
 }
 assert.equal(live.status,'ready');
 assert.equal(live.writesPerformed,false);

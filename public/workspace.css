@@ -1,6 +1,5 @@
 /* Trov workspace: connected logistics and an independent report library. */
-.welcome-strip{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:30px;padding-bottom:22px;border-bottom:1px solid var(--line)}
-.welcome-strip>p{font-size:14px;font-weight:500;letter-spacing:.01em}
+.time-strip{display:flex;align-items:center;justify-content:flex-end;gap:18px;margin-bottom:26px;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .pacific-clock{display:flex;align-items:center;gap:20px;font-variant-numeric:tabular-nums}
 .pacific-date{font-size:11px;color:var(--muted);white-space:nowrap}
 .pacific-time{display:flex;align-items:baseline;gap:10px;white-space:nowrap}
@@ -13,10 +12,19 @@
 .ads-kpi:last-child{padding-right:0}
 .ads-kpi-label{font-size:12px;color:var(--muted)}
 .ads-kpi-value{display:flex;align-items:baseline;gap:5px;margin:8px 0 7px;font-family:Manrope,sans-serif;font-size:34px;line-height:1.3;letter-spacing:-1px;font-weight:550;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ads-kpi-number{position:relative;display:inline-flex;align-items:baseline;gap:5px}
+.ads-digit-stack{display:inline-grid;text-align:right}
+.ads-digit-stack>span{grid-area:1 / 1}
+.ads-count-size{visibility:hidden}
+.ads-trend{position:absolute;right:-10px;top:-3px;width:10px;height:12px;line-height:1}
+.ads-trend svg{width:10px;height:12px;display:block}
+.ads-trend.up{color:var(--red)}
+.ads-trend.down{color:var(--green)}
+.ads-trend.down svg{transform:rotate(180deg)}
 .ads-kpi-value small{font-size:12px;font-weight:400;color:var(--muted);letter-spacing:0}
 .ads-kpi-source{font-size:10px;color:var(--muted);line-height:1.7}
-@media(max-width:700px){.welcome-strip{margin-bottom:26px;padding-bottom:19px;gap:12px}.welcome-strip>p{font-size:13px}.pacific-clock{flex-direction:column;align-items:flex-end;gap:4px}.pacific-date{font-size:10px}.pacific-time{gap:8px}.pacific-time strong{font-size:15px}.pacific-time small{font-size:9px}.ads-overview{margin-bottom:28px}.ads-kpis{padding:20px 18px;grid-template-columns:1.45fr 1fr 1fr}.ads-kpi{padding:0 12px}.ads-kpi-label{font-size:11px}.ads-kpi-value{font-size:24px;letter-spacing:-.8px;gap:3px;margin:10px 0 6px}.ads-kpi-value small{font-size:10px}.ads-kpi-source{font-size:9px;white-space:nowrap;letter-spacing:-.1px}}
-@media(max-width:370px){.ads-kpis{padding:18px 14px}.ads-kpi{padding:0 8px}.ads-kpi-value{font-size:20px;letter-spacing:-.6px;gap:2px}.ads-kpi-value small{font-size:9px}.ads-kpi-source{font-size:8px}.ads-kpi-label{font-size:10px}}
+@media(max-width:700px){.time-strip{margin-bottom:26px;padding-bottom:19px;gap:12px}.pacific-clock{flex-direction:column;align-items:flex-end;gap:4px}.pacific-date{font-size:10px}.pacific-time{gap:8px}.pacific-time strong{font-size:15px}.pacific-time small{font-size:9px}.ads-overview{margin-bottom:28px}.ads-kpis{padding:20px 18px;grid-template-columns:1.45fr 1fr 1fr}.ads-kpi{padding:0 12px}.ads-kpi-label{font-size:11px}.ads-kpi-value{font-size:24px;letter-spacing:-.8px;gap:3px;margin:10px 0 6px}.ads-kpi-number{gap:3px}.ads-trend{right:-8px;width:8px;top:-3px}.ads-trend svg{width:8px}.ads-kpi-value small{font-size:10px}.ads-kpi-source{font-size:9px;white-space:nowrap;letter-spacing:-.1px}}
+@media(max-width:370px){.ads-kpis{padding:18px 14px}.ads-kpi{padding:0 8px}.ads-kpi-value{font-size:20px;letter-spacing:-.6px;gap:2px}.ads-kpi-number{gap:2px}.ads-kpi-value small{font-size:9px}.ads-kpi-source{font-size:8px}.ads-kpi-label{font-size:10px}}
 .official-brand{display:flex;align-items:center;line-height:1;flex-shrink:0}
 .official-brand img{width:117px;height:auto;display:block}
 .footer-logo{width:57px;height:auto;margin-right:10px;vertical-align:middle;opacity:.6}
