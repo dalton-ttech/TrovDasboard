@@ -7,6 +7,8 @@
   let ALL = MODEL.merge(DATA.shipments, SYNC);
   let REPORTS = window.TROV_RUNTIME?.reports || { reports: [] };
   const ADS_OVERVIEW = window.TROV_RUNTIME?.adsOverview || null;
+  const SERVER_AVAILABLE = window.TROV_RUNTIME?.serverAvailable === true;
+  const DATA_UNPUBLISHED = !SERVER_AVAILABLE && SYNC?.status !== 'ready' && ADS_OVERVIEW?.status !== 'ready' && !DATA.shipments.length;
   let syncing = false;
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -88,11 +90,11 @@
   }
 
   function nav(mobile = false) {
-    return `<nav class="${mobile ? 'bottom-nav' : 'desktop-nav'}" aria-label="${mobile ? '移动端' : '主'}导航">${navItems.map(([id, name, symbol]) => `<a href="#${id}" ${store.page === id ? 'aria-current="page"' : ''} class="nav-item ${store.page === id ? 'active' : ''}">${icon(symbol)}<span>${mobile ? mobileNavLabels[id] || name : name}</span>${id === 'shipments' ? `<span class="nav-count">${ALL.filter(isActive).length}</span>` : ''}</a>`).join('')}</nav>`;
+    return `<nav class="${mobile ? 'bottom-nav' : 'desktop-nav'}" aria-label="${mobile ? '移动端' : '主'}导航">${navItems.map(([id, name, symbol]) => `<a href="#${id}" ${store.page === id ? 'aria-current="page"' : ''} class="nav-item ${store.page === id ? 'active' : ''}">${icon(symbol)}<span>${mobile ? mobileNavLabels[id] || name : name}</span>${id === 'shipments' && !DATA_UNPUBLISHED ? `<span class="nav-count">${ALL.filter(isActive).length}</span>` : ''}</a>`).join('')}</nav>`;
   }
   function header() {
     const alerts = ALL.filter(needsAttention).length;
-    return `<header class="app-header"><div class="header-inner"><a class="brand official-brand" href="#overview" aria-label="Trov 首页"><img src="assets/trov-logo-transparent.png" alt="Trov" width="600" height="165"></a><span class="brand-divider"></span><span class="brand-caption">Workspace</span>${nav()}<div class="header-actions"><a class="demo-badge ${SYNC ? 'connected' : ''}" href="#data"><i></i>${SYNC ? 'Shopify · 已接入' : '历史快照 · DEMO'}</a><button class="icon-button notification" data-action="alerts" aria-label="查看 ${alerts} 票需关注包裹">${icon('bell')}${alerts ? '<b></b>' : ''}</button><a class="workspace-avatar" href="#data" aria-label="Trov 工作区数据">T</a></div></div></header>`;
+    return `<header class="app-header"><div class="header-inner"><a class="brand official-brand" href="#overview" aria-label="Trov 首页"><img src="assets/trov-logo-transparent.png" alt="Trov" width="600" height="165"></a><span class="brand-divider"></span><span class="brand-caption">Workspace</span>${nav()}<div class="header-actions"><a class="demo-badge ${SYNC ? 'connected' : ''}" href="#data"><i></i>${DATA_UNPUBLISHED ? '数据待发布' : SYNC ? SERVER_AVAILABLE ? 'Shopify · 已接入' : 'Shopify · 已发布快照' : '历史快照 · DEMO'}</a><button class="icon-button notification" data-action="alerts" aria-label="查看 ${alerts} 票需关注包裹">${icon('bell')}${alerts ? '<b></b>' : ''}</button><a class="workspace-avatar" href="#data" aria-label="Trov 工作区数据">T</a></div></div></header>`;
   }
 
   function periodControl() {
@@ -179,6 +181,7 @@
   }
 
   function overview() {
+    if (DATA_UNPUBLISHED) return `${pageHeading('WORKSPACE OVERVIEW', '数据尚未发布', '销量总览 · 实时物流', '')}<section class="panel delivery-empty" aria-labelledby="unpublished-title"><div class="empty-graphic">${icon('archive')}</div><h2 id="unpublished-title">等待第一份数据快照</h2><p>当前页面尚未载入销量和物流数据。<br>数据发布后，这里将显示实际指标与上次读取时间。</p></section>`;
     const rows = scoped(), active = sorted(rows.filter(isActive));
     return views.adsOverview({ snapshot: ADS_OVERVIEW, period: adsPeriod }, viewHelpers) + `${pageHeading('OPERATIONS OVERVIEW', '实时物流', SYNC ? '上次读取 ' + stamp(SYNC.syncedAt) : '快照截至 2026.09.04 · 历史 OMS')}${metrics(rows)}${alertBanner()}<div class="overview-grid"><section class="panel shipments-panel">${sectionHeading('待送达包裹 <span class="heading-count">' + active.length + '</span>', SYNC ? '异常优先 · Shopify 观测状态' : '异常优先 · 历史 OMS', '<button class="text-button" data-action="show-active">查看全部 ' + icon('arrow') + '</button>')}${table(active.slice(0, 5), true)}<div class="table-footer"><span>${active.length > 5 ? `展示 ${Math.min(active.length, 5)} / ${active.length} 票待送达包裹` : `共 ${active.length} 票待送达包裹`}</span><button class="text-button" data-action="show-active">打开包裹列表 ${icon('arrow')}</button></div></section>${statusSummary(rows)}<section class="panel activity-panel">${sectionHeading(store.chart === 'volume' ? '发货节奏' : '仓内处理', store.chart === 'volume' ? '按 OMS 创建日期分组 · 每周建单量' : 'OMS 创建 → 发货中位数 · 小时', '<div class="segmented"><button data-chart="volume" class="' + (store.chart === 'volume' ? 'selected' : '') + '">建单量</button><button data-chart="handling" class="' + (store.chart === 'handling' ? 'selected' : '') + '">仓内处理</button></div>')}${weeklyChart(rows, store.chart === 'handling')}<div class="chart-caption"><span><i class="small-dot blue"></i>${store.chart === 'volume' ? '历史建单量' : '仓内处理时间'}</span><span>末周截至 09.04</span></div></section><section class="panel cost-panel">${sectionHeading('运费分布', '按目的地偏远程度 · USD', '<button class="icon-button subtle" data-action="cost" aria-label="查看运费分析">' + icon('arrow') + '</button>')}${costComparison(rows)}<div class="panel-note">${icon('info')}仅包含 OMS 记录的历史运费</div></section></div>${coverageMini()}`;
   }
@@ -226,11 +229,11 @@
     return `${pageHeading('PERFORMANCE & INSIGHTS', '物流分析', '从已知数据出发，看清效率与成本。')}<div class="analysis-tabs" role="group" aria-label="分析维度">${[['handling', '仓内处理'], ['cost', '运费与目的地'], ['delivery', '运输时效']].map(([id, name]) => `<button data-analysis="${id}" class="${tab === id ? 'selected' : ''}" aria-pressed="${tab === id}">${name}</button>`).join('')}</div>${content}<div class="page-footnote">${icon('info')}${SYNC ? '统计区间按 Shopify 下单日期（UTC）筛选。运输时效仅计算有效时间样本；OMS 仓内处理独立统计。' : '统计区间按 OMS 创建日期筛选；仓内耗时按同表原始时间差计算。'}</div>`;
   }
   function dataPage() {
-    return views.dataPage({ sync: SYNC, history: DATA, rows: ALL, syncing, reports: REPORTS }, viewHelpers);
+    return views.dataPage({ sync: SYNC, history: DATA, rows: ALL, syncing, reports: REPORTS, serverAvailable: SERVER_AVAILABLE }, viewHelpers);
   }
 
   function footer() {
-    return `<footer class="app-footer"><span><img class="footer-logo" src="assets/trov-logo-transparent.png" alt="Trov"> Operations Workspace</span><span>${store.page==='reports' ? 'Meta × Shopify · 投流报告' : SYNC ? 'Shopify · '+stamp(SYNC.syncedAt) : '历史快照 · '+DATA.snapshotDate}</span></footer>`;
+    return `<footer class="app-footer"><span><img class="footer-logo" src="assets/trov-logo-transparent.png" alt="Trov"> Operations Workspace</span><span>${DATA_UNPUBLISHED ? '等待数据发布' : store.page==='reports' ? 'Meta × Shopify · 投流报告' : SYNC ? 'Shopify · '+stamp(SYNC.syncedAt) : '历史快照 · '+DATA.snapshotDate}</span></footer>`;
   }
   let returnFocus = null;
   let reportSizeObserver = null;
@@ -243,7 +246,7 @@
     store.reportId = route.startsWith('report/') ? route.slice(7) : null;
     store.page = navItems.some(([id]) => id === page) ? page : 'overview';
     document.title = `Trov · ${{ overview: '实时物流', shipments: '包裹工作台', analytics: '物流分析', data: '数据与来源', reports: '投流报告' }[store.page]}`;
-    $('#app').innerHTML = `${header()}<main id="main" class="main-container" tabindex="-1"><div class="time-strip"><time class="pacific-clock" data-pacific-clock aria-label="当前太平洋日期与时间"><span class="pacific-date" data-pacific-date></span><span class="pacific-time"><strong data-pacific-time></strong><small data-pacific-zone></small></span></time></div>${({ overview, shipments: shipmentsPage, analytics: analyticsPage, data: dataPage, reports: () => views.reportsPage({ catalog: REPORTS, kind: store.reportKind, query: store.reportQuery, reportId: store.reportId }, viewHelpers) })[store.page]() }${footer()}</main>${nav(true)}`;
+    $('#app').innerHTML = `${header()}<main id="main" class="main-container" tabindex="-1"><div class="time-strip"><time class="pacific-clock" data-pacific-clock aria-label="当前太平洋日期与时间"><span class="pacific-date" data-pacific-date></span><span class="pacific-time"><strong data-pacific-time></strong><small data-pacific-zone></small></span></time></div>${({ overview, shipments: shipmentsPage, analytics: analyticsPage, data: dataPage, reports: () => views.reportsPage({ catalog: REPORTS, kind: store.reportKind, query: store.reportQuery, reportId: store.reportId, serverAvailable: SERVER_AVAILABLE }, viewHelpers) })[store.page]() }${footer()}</main>${nav(true)}`;
     window.TrovClock.update(document);
     window.TrovAdsMotion.mount(document, store.page === 'overview' ? `${adsPeriod}:${ADS_OVERVIEW?.syncedAt || ''}` : null, { replay: !keepScroll });
     bind();
@@ -351,6 +354,7 @@
     });
     $('[data-sync-shopify]')?.addEventListener('click', syncShopify);
     $('[data-refresh-reports]')?.addEventListener('click', async () => {
+      if (!SERVER_AVAILABLE) return;
       try { const res = await fetch('/api/reports'); if (!res.ok) throw new Error(); REPORTS = await res.json(); render(true); toast('报告索引已更新'); }
       catch { toast('无法更新报告索引，保留已载入报告'); }
     });
@@ -380,6 +384,7 @@
     }
   }
   async function syncShopify() {
+    if (!SERVER_AVAILABLE) return;
     if (syncing) return;
     syncing = true; render(true);
     try {

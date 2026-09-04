@@ -66,4 +66,4 @@ Cloudflare Pages 连接 GitHub 后，可在仓库提交时自动构建与部署�
 - 本机任务需要电脑开机、Codex 运行且网络可用。电脑关闭时，线上仍显示上一次成功发布的快照。
 - 每天的汇总和 HTML 适合这个方案；图片和大体积二进制文件不纳入日常 Git 提交。GitHub 有单文件及仓库体积方面的限制。[文件体积说明](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)。
 
-当前提交已完成界面、比较计算和本地每日汇总保存。静态导出、私有仓库调整、定时上传和 Cloudflare 发布仍待接入；尚未改变仓库可见性，也未启用自动上传业务数据。
+当前已完成界面、比较计算、本地每日汇总保存和静态导出。运行 `python -B scripts/export_static.py` 生成完整 `dist/`，具体发布步骤见 [STATIC_DATA_PUBLISH.md](STATIC_DATA_PUBLISH.md)。私有仓库调整、定时上传和真实数据上线仍待接入；尚未改变仓库可见性，也未启用自动上传业务数据。

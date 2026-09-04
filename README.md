@@ -52,6 +52,8 @@ python -B scripts/report_catalog.py
 
 公开仓库仅包含代码、字体和品牌素材，不包含订单、运单、真实报告、API 缓存或凭据。`data/` 已忽略；`public/data.js` 是空数据回退，本地服务从 `data/history.json` 动态提供相同 URL。新克隆没有业务数据，需配置来源后才能显示真实结果。
 
+运行 `python -B scripts/export_static.py` 可以将本地成功快照和完整 HTML 报告导出为可独立运行的 `dist/`。该目录含业务数据，默认不提交到公开仓库。现有 Pages 空数据问题的发布步骤见 [STATIC_DATA_PUBLISH.md](docs/STATIC_DATA_PUBLISH.md)。
+
 ## 统计口径
 
 投流销售额采用现有监测脚本的 `all_net_sales`（调整后不含税订单小计），订单量为 `all_orders`（非测试、未取消、已付款或部分退款订单）。ROAS 为 Meta A02 / A03 总归因购买价值 ÷ 总花费，属于 Meta 平台归因；无花费时显示 —。不累加日报 / 周报，也不平均广告 ROAS。
