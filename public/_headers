@@ -1,0 +1,10 @@
+/*
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: same-origin
+/data.js
+  Cache-Control: no-store
+/runtime.js
+  Cache-Control: no-store
+/reports/*
+  Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; script-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'

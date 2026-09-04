@@ -13,12 +13,12 @@ npm run dev
 
 需要 Node.js 18+ 和 Python 3.10+。默认检测本机 Codex bundled Python，也可用 `TROV_PYTHON` 指定 Python 可执行文件。服务仅监听 `127.0.0.1`，其他设备不能直接访问这个地址。字体及用户提供的 Logo 保存在 `public/assets`。
 
-**当前提交尚未部署到 Cloudflare。** 按本地计算、GitHub 每日同步快照的方式，选择 Cloudflare Pages。当前可先部署前端，真实数据的私有同步仍待接入；填写参数见 [Cloudflare 部署说明](docs/CLOUDFLARE_DEPLOYMENT.md)。
+线上站点为 <https://trov-work.pages.dev/>，使用 Cloudflare Pages 从 GitHub `main` 分支的 `public/` 发布。用户已授权保留公开仓库并公开真实业务快照与 HTML 报告。数据在本地计算后导出、提交，页面读取已发布快照；每日定时上传尚未启用。填写参数见 [Cloudflare 部署说明](docs/CLOUDFLARE_DEPLOYMENT.md)。
 
 ## 界面
 
 - 顶部显示实时太平洋日期、时间，采用 `America/Los_Angeles`，自动切换 PDT / PST。
-- 销量总览和物流实况共用标题、时间说明及日期选择样式，标题位于指标卡片外。
+- 销量总览和实时物流共用标题、时间说明及日期选择样式，标题位于指标卡片外。
 - 销量总览默认最近 30 个完整太平洋自然日，可切换近 7 天，截至昨日；与物流区间独立，仅显示上次读取时间。
 - 每次打开或刷新总览，销售额、订单量和 ROAS 从 0 快速计数至当前值。复用本地 CountUp.js 2.9.0，时长 0.8 秒；切换投流区间也会播放，减少动态效果设置下直接显示最终值。
 - 后台对比前一天的同长度滚动区间：提升显示红色向上角标，下降显示绿色向下角标，持平或数据缺失不显示角标。
@@ -50,9 +50,9 @@ python -B scripts/report_catalog.py
 | `data/ads-overview-history/YYYY-MM-DD.json` | 每个太平洋日期实际计算的汇总，供次日比较 |
 | `data/reports.json` | 已完成报告索引 |
 
-公开仓库仅包含代码、字体和品牌素材，不包含订单、运单、真实报告、API 缓存或凭据。`data/` 已忽略；`public/data.js` 是空数据回退，本地服务从 `data/history.json` 动态提供相同 URL。新克隆没有业务数据，需配置来源后才能显示真实结果。
+公开仓库包含前端代码、字体、品牌素材，以及经授权发布的 `public/data.js`、`public/runtime.js` 和 `public/reports/` HTML。API 凭据、原始 API 响应和本地缓存仍不提交，`data/` 继续被忽略。本地服务从 `data/` 动态提供数据，线上页面直接读取已提交的静态快照。
 
-运行 `python -B scripts/export_static.py` 可以将本地成功快照和完整 HTML 报告导出为可独立运行的 `dist/`。该目录含业务数据，默认不提交到公开仓库。现有 Pages 空数据问题的发布步骤见 [STATIC_DATA_PUBLISH.md](docs/STATIC_DATA_PUBLISH.md)。
+运行 `python -B scripts/export_static.py` 可以将本地成功快照和完整 HTML 报告导出为可独立运行的 `dist/`。`dist/` 本身仍被忽略；将其中的 `data.js`、`runtime.js`、`_headers` 和 `reports/` 复制至 `public/`，再提交并推送 `main`，即可触发现有 Pages 项目发布。具体命令见 [STATIC_DATA_PUBLISH.md](docs/STATIC_DATA_PUBLISH.md)。
 
 ## 统计口径
 

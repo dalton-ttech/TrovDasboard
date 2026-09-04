@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>2026年8月20日投放日报</title>
+  <style>
+    :root {
+      --ink: oklch(22% 0.035 252);
+      --ink-soft: oklch(43% 0.026 252);
+      --paper: oklch(97% 0.012 91);
+      --paper-deep: oklch(92.5% 0.020 88);
+      --surface: oklch(99% 0.005 91);
+      --navy: oklch(31% 0.076 252);
+      --amber: oklch(79% 0.145 82);
+      --green: oklch(47% 0.112 151);
+      --green-soft: oklch(94% 0.032 151);
+      --red: oklch(51% 0.145 29);
+      --red-soft: oklch(94% 0.034 29);
+      --rule: oklch(75% 0.024 86);
+      --space-xs: 0.5rem;
+      --space-sm: 0.75rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      --font-display: "Source Han Serif SC", "STZhongsong", "SimSun", serif;
+      --font-body: "Source Han Sans SC", "Microsoft YaHei UI", "DengXian", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper-deep); color: var(--ink); font-kerning: normal; }
+    body { margin: 0; min-width: 20rem; background: var(--paper); color: var(--ink); font: 400 1rem/1.55 var(--font-body); }
+    .report { width: min(100%, 78rem); margin: 0 auto; padding: clamp(1.25rem, 3.5vw, 3.5rem); }
+    .masthead { display: grid; grid-template-columns: minmax(0, 1fr) 20rem; gap: var(--space-xl); align-items: end; padding-bottom: var(--space-lg); border-bottom: 1px solid var(--ink); }
+    .brandline { display: flex; align-items: center; gap: var(--space-sm); color: var(--navy); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+    .brandmark { display: block; flex: 0 0 auto; width: clamp(6rem, 15vw, 7.5rem); height: auto; }
+    h1, h2, h3, h4, p { margin: 0; }
+    h1 { margin-top: var(--space-lg); font: 700 clamp(2.5rem, 5vw, 4.8rem)/1.03 var(--font-display); letter-spacing: -0.045em; }
+    .report-title__line { display: block; }
+    .report-title__line + .report-title__line { margin-top: 0.08em; }
+    .masthead__meta { display: grid; gap: var(--space-sm); padding-top: var(--space-sm); border-top: 0.45rem solid var(--amber); text-align: right; color: var(--ink-soft); font-size: 0.78rem; }
+    .masthead__meta strong { color: var(--ink); font-size: 1rem; }
+    .summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-xl); align-items: center; padding: var(--space-lg) 0; }
+    .summary p { max-width: 56ch; font: 650 clamp(1.25rem, 2.1vw, 1.85rem)/1.35 var(--font-display); }
+    .readonly { display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--green); font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+    .readonly::before { content: ""; width: 0.55rem; aspect-ratio: 1; background: currentColor; border-radius: 50%; }
+    .data-warning { padding: var(--space-md); background: var(--red-soft); color: var(--red); font-weight: 700; }
+    .metric-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+    .metric { min-width: 0; padding: var(--space-md); }
+    .metric + .metric { border-left: 1px solid var(--rule); }
+    .metric__label, .metric__note { display: block; color: var(--ink-soft); font-size: 0.72rem; }
+    .metric__value { display: block; margin: 0.3rem 0; font: 750 clamp(1.35rem, 2.5vw, 2.15rem)/1 var(--font-body); font-variant-numeric: tabular-nums; }
+    .context-band { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--space-lg); background: var(--navy); color: var(--surface); }
+    .context-band div { padding: var(--space-md) var(--space-lg); }
+    .context-band div + div { border-left: 1px solid oklch(58% 0.04 252); }
+    .context-band span { display: block; color: oklch(84% 0.025 252); font-size: 0.72rem; }
+    .context-band strong { display: block; margin-top: 0.25rem; font-size: 1rem; font-variant-numeric: tabular-nums; }
+    .section { padding-top: var(--space-xl); }
+    .section-head { display: flex; justify-content: space-between; gap: var(--space-xl); align-items: end; margin-bottom: var(--space-md); }
+    .section-kicker { color: var(--navy); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+    .section-head h2 { margin-top: 0.3rem; font: 700 1.7rem/1.2 var(--font-display); }
+    .section-head p { max-width: 38ch; color: var(--ink-soft); font-size: 0.78rem; text-align: right; }
+    .source-bar { display: flex; width: 100%; height: 1.15rem; overflow: hidden; background: var(--paper-deep); }
+    .source-segment { display: block; min-width: 0; height: 100%; }
+    .source-segment--campaign { background: var(--navy); }
+    .source-segment--paid { background: var(--red); }
+    .source-segment--organic { background: var(--green); }
+    .source-segment--referral { background: var(--amber); }
+    .source-segment--unknown { background: var(--rule); }
+    .source-legend { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-sm); margin-top: var(--space-sm); }
+    .source-key { display: grid; grid-template-columns: 0.6rem minmax(0, 1fr) auto; gap: 0.4rem; align-items: center; color: var(--ink-soft); font-size: 0.72rem; }
+    .source-key strong { color: var(--ink); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+    .source-key__dot { width: 0.6rem; aspect-ratio: 1; }
+    .creatives { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md); }
+    .creative { min-width: 0; border: 1px solid var(--rule); background: var(--surface); }
+    .creative__header { display: flex; justify-content: space-between; gap: var(--space-md); align-items: start; padding: var(--space-md); border-bottom: 1px solid var(--rule); }
+    .creative__code { display: block; color: var(--navy); font-size: 1.35rem; font-weight: 850; }
+    .creative h3 { max-width: 30rem; margin-top: 0.2rem; color: var(--ink-soft); font-size: 0.68rem; font-weight: 500; overflow-wrap: anywhere; }
+    .creative__traffic { display: flex; gap: var(--space-md); color: var(--ink-soft); font-size: 0.68rem; white-space: nowrap; }
+    .creative__traffic strong { display: block; color: var(--ink); font-size: 0.9rem; }
+    .creative__outcome { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--paper-deep); }
+    .creative__outcome div { padding: var(--space-sm) var(--space-md); }
+    .creative__outcome div + div { border-left: 1px solid var(--rule); }
+    .creative__outcome span { display: block; color: var(--ink-soft); font-size: 0.66rem; }
+    .creative__outcome strong { display: block; margin-top: 0.2rem; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+    .creative__visuals { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(10rem, 0.85fr); gap: var(--space-lg); padding: var(--space-md); }
+    .creative__visuals h4 { color: var(--ink-soft); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; }
+    .flow { display: grid; gap: 0.4rem; margin-top: var(--space-sm); }
+    .flow-row { display: grid; grid-template-columns: 4.5rem minmax(4rem, 1fr) 2.5rem; gap: var(--space-xs); align-items: center; }
+    .flow-row__label { color: var(--ink-soft); font-size: 0.67rem; }
+    .flow-row__track { height: 0.55rem; background: var(--paper-deep); overflow: hidden; }
+    .flow-row__fill { display: block; height: 100%; background: var(--navy); }
+    .flow-row__value { text-align: right; font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+    .retention { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-xs); height: 7.5rem; margin-top: var(--space-sm); }
+    .retention-column { display: grid; grid-template-rows: 1rem 1fr 1rem; gap: 0.2rem; min-width: 0; text-align: center; }
+    .retention-column__value, .retention-column__label { color: var(--ink-soft); font-size: 0.58rem; font-variant-numeric: tabular-nums; }
+    .retention-column__track { display: flex; align-items: end; justify-content: center; background: var(--paper-deep); overflow: hidden; }
+    .retention-column__fill { display: block; width: 64%; background: var(--amber); }
+    .watch-time { margin-top: 0.35rem; color: var(--ink-soft); font-size: 0.62rem; text-align: right; }
+    .inventory { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+    .inventory-head { align-items: center; }
+    .inventory-head > div:first-child p { margin-top: 0.25rem; text-align: left; }
+    .period-sales { display: flex; align-items: baseline; gap: var(--space-sm); text-align: right; }
+    .period-sales span { color: var(--ink-soft); font-size: 0.78rem; }
+    .period-sales strong { color: var(--navy); font-size: 2.15rem; line-height: 1; font-variant-numeric: tabular-nums; }
+    .period-sales small { margin-left: 0.2rem; font-size: 0.72rem; font-weight: 600; }
+    .inventory-item { display: grid; gap: var(--space-sm); padding: var(--space-md); }
+    .inventory-item + .inventory-item { border-left: 1px solid var(--rule); }
+    .inventory-item__color { color: var(--ink); font-size: 0.82rem; font-weight: 750; }
+    .inventory-item__figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); }
+    .inventory-stat { display: block; }
+    .inventory-stat > span { display: block; color: var(--ink-soft); font-size: 0.7rem; }
+    .inventory-stat strong { display: block; margin-top: 0.15rem; font-size: 1.7rem; line-height: 1; font-variant-numeric: tabular-nums; }
+    .inventory-stat--sales strong { color: var(--navy); font-size: 2rem; }
+    .inventory-stat small { margin-left: 0.2rem; font-size: 0.68rem; font-weight: 600; }
+    .inventory-delta { font-size: 0.7rem; font-weight: 750; }
+    .inventory-delta--up { color: var(--green); }
+    .inventory-delta--down { color: var(--red); }
+    .inventory-delta--flat, .inventory-delta--base { color: var(--ink-soft); }
+    .reconciliation { display: flex; justify-content: space-between; gap: var(--space-lg); align-items: center; margin-top: var(--space-lg); padding-top: var(--space-sm); border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: 0.7rem; }
+    .reconciliation strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+    .footer { display: flex; justify-content: space-between; gap: var(--space-lg); margin-top: var(--space-sm); color: var(--ink-soft); font-size: 0.62rem; }
+    .footer strong { color: var(--green); }
+    @media (max-width: 64rem) {
+      .masthead { grid-template-columns: 1fr; }
+      .masthead__meta { text-align: left; }
+      .metric-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .metric:nth-child(4) { border-left: 0; }
+      .metric:nth-child(n+4) { border-top: 1px solid var(--rule); }
+      .creatives { grid-template-columns: 1fr; }
+      .source-legend { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 40rem) {
+      .report { padding: 0.75rem 0.75rem 1.25rem; }
+      .masthead { gap: var(--space-md); padding-bottom: var(--space-md); }
+      h1 { margin-top: var(--space-md); font-size: 2.15rem; line-height: 1.06; }
+      .masthead__meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md); font-size: 0.7rem; }
+      .masthead__meta strong { font-size: 0.84rem; }
+      .brandmark { width: 6rem; }
+      .summary, .section-head, .reconciliation, .footer { display: grid; gap: var(--space-sm); }
+      .summary { padding: var(--space-md) 0; }
+      .summary p { font-size: 1.2rem; }
+      .section-head p { text-align: left; }
+      .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-strip .metric:nth-child(n) { border-left: 0; border-top: 0; }
+      .metric-strip .metric:nth-child(even) { border-left: 1px solid var(--rule); }
+      .metric-strip .metric:nth-child(n+3) { border-top: 1px solid var(--rule); }
+      .metric { padding: 0.85rem 0.75rem; }
+      .metric__value { font-size: 1.45rem; }
+      .context-band, .inventory { grid-template-columns: 1fr; }
+      .context-band div + div, .inventory-item + .inventory-item { border-left: 0; border-top: 1px solid var(--rule); }
+      .context-band div { padding: 0.85rem 0.75rem; }
+      .section { padding-top: 1.5rem; }
+      .section-head h2 { font-size: 1.55rem; }
+      .source-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .source-key { grid-template-columns: 0.55rem minmax(0, 1fr) auto; font-size: 0.68rem; }
+      .creative__header, .creative__visuals { display: grid; grid-template-columns: 1fr; }
+      .creative__outcome { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .creative__outcome div:nth-child(3) { border-left: 0; border-top: 1px solid var(--rule); }
+      .creative__outcome div:nth-child(4) { border-top: 1px solid var(--rule); }
+      .inventory-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+      .period-sales { display: grid; gap: 0.2rem; }
+      .period-sales strong { font-size: 2rem; }
+      .inventory-item { padding: 0.9rem 0.75rem; }
+      .inventory-item__figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .inventory-stat strong { font-size: 1.65rem; }
+      .inventory-stat--sales strong { font-size: 2.05rem; }
+    }
+    @media print {
+      @page { size: A4 landscape; margin: 9mm; }
+      html, body { background: var(--paper); font-size: 0.78rem; line-height: 1.35; }
+      .report { width: auto; max-width: none; padding: 0; }
+      .masthead { grid-template-columns: minmax(0, 1fr) 15rem; gap: 1rem; padding-bottom: 0.55rem; }
+      h1 { margin-top: 0.5rem; font-size: 2.15rem; }
+      .masthead__meta { gap: 0.25rem; font-size: 0.6rem; }
+      .brandmark { width: 5.25rem; }
+      .summary { padding: 0.55rem 0; }
+      .summary p { font-size: 1rem; }
+      .readonly { font-size: 0.58rem; }
+      .metric-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      .metric:nth-child(n) { padding: 0.5rem 0.55rem; border-top: 0; }
+      .metric:nth-child(4) { border-left: 1px solid var(--rule); }
+      .metric__label, .metric__note { font-size: 0.53rem; }
+      .metric__value { margin: 0.18rem 0; font-size: 1rem; }
+      .context-band { margin-top: 0.55rem; }
+      .context-band div { padding: 0.45rem 0.75rem; }
+      .context-band span { font-size: 0.52rem; }
+      .context-band strong { font-size: 0.7rem; }
+      .section { padding-top: 0.65rem; }
+      .section-head { margin-bottom: 0.4rem; }
+      .section-kicker { font-size: 0.52rem; }
+      .section-head h2 { margin-top: 0.15rem; font-size: 1rem; }
+      .section-head p { font-size: 0.53rem; }
+      .source-bar { height: 0.55rem; }
+      .source-legend { gap: 0.35rem; margin-top: 0.35rem; }
+      .source-key { grid-template-columns: 0.35rem minmax(0, 1fr) auto; gap: 0.2rem; font-size: 0.46rem; }
+      .source-key strong { font-size: 0.5rem; }
+      .source-key__dot { width: 0.35rem; }
+      .creatives { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; break-inside: avoid; }
+      .creative__header { padding: 0.45rem 0.55rem; }
+      .creative__code { font-size: 0.9rem; }
+      .creative h3, .creative__traffic { font-size: 0.48rem; }
+      .creative__traffic strong { font-size: 0.62rem; }
+      .creative__outcome div { padding: 0.35rem 0.5rem; }
+      .creative__outcome span { font-size: 0.48rem; }
+      .creative__outcome strong { font-size: 0.72rem; }
+      .creative__visuals { grid-template-columns: minmax(0, 1.2fr) minmax(8rem, 0.8fr); gap: 0.65rem; padding: 0.5rem; }
+      .creative__visuals h4 { font-size: 0.5rem; }
+      .flow { gap: 0.25rem; margin-top: 0.35rem; }
+      .flow-row { grid-template-columns: 3.3rem minmax(3rem, 1fr) 1.6rem; gap: 0.25rem; }
+      .flow-row__label, .flow-row__value { font-size: 0.48rem; }
+      .flow-row__track { height: 0.36rem; }
+      .retention { height: 4.8rem; margin-top: 0.35rem; }
+      .retention-column { grid-template-rows: 0.7rem 1fr 0.7rem; }
+      .retention-column__value, .retention-column__label, .watch-time { font-size: 0.43rem; }
+      .inventory { break-inside: avoid; }
+      .inventory-item { padding: 0.45rem 0.6rem; }
+      .inventory-item__color, .inventory-delta { font-size: 0.52rem; }
+      .inventory-item__figures { gap: 0.35rem; }
+      .inventory-stat > span { font-size: 0.45rem; }
+      .inventory-stat strong { font-size: 0.9rem; }
+      .inventory-stat--sales strong { font-size: 1.05rem; }
+      .inventory-stat small { font-size: 0.42rem; }
+      .period-sales { gap: 0.4rem; }
+      .period-sales span { font-size: 0.5rem; }
+      .period-sales strong { font-size: 1.2rem; }
+      .reconciliation { margin-top: 0.5rem; padding-top: 0.4rem; font-size: 0.48rem; }
+      .footer { margin-top: 0.3rem; font-size: 0.43rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="report">
+    <header class="masthead">
+      <div>
+        <div class="brandline"><img class="brandmark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAClCAYAAACA9YMyAAAmg0lEQVR42u2de7hVVbn/P2won6cw2IipeEky8Zb3A6k4xR+TlDJrmqVZimalplZeKjuZpXnLjFDT1DTvyZGjnpmal2Dao9MrSAooKGogIOIJBZTy0BE5f4yxfi6Xa++91tprzTHG2t/P8+xns9mXOeY7xxzzO9/xXvrNPnMUcRqRJTmWMcC+wI7Arvb/Pk73LATW2X+vAwYAa4F+9ut+FT//N6ADeMd+Fu5YZK/DSuBN4FXgZfv1KuDJyl8ony+lf1fMIar8znpZkq+p9jeEEEKIdqPf7DNHlf4dAb8DtpVZRAVzgReB+cALwDPA08AKmUYIIYR4PwPs5xOAS2UO0QXb249KnrCC6zHgfmCOTCWEEEKY7bmPSVyJBvk34CvARcBsYBlwAzAB2KKRPxinkawqhBCCdtginAScJFOIFjAT+ANwO/CSzCGEEII+5MHaRWYQLWJ34NeYJIjpwNeALWUWIYQQfUFg7SsziAIYCdwELACu0rwTQgjR7gJLiKL5JvAXYB7GqyWEEELQjlmEQrhgW4xX62fA2cCNMgmNJAYMA/bE1JsrrznXH1OPThTHOvvxVpbkd8scQvRtgfU6MESmEA7ZGpN9eDpwFjBZJqmLzYBbZQavmAdIYAlB394iVLFI4QvbADdjCpoeIXMIIYQIWWDNkhkEfnq05mHqtAkhhBDBCaxFMoPA3xithZisw+EyR5e8LRMIIYR/AuspmUHgf9bhVOBwmaIqH5QJ8DH5QEYQQgJLCO/ZCpNleDUNtuFpY96RCfwjS3IZQQjFYLFMphCB8A0gAz4pU1BejkEIIYSHhUZnyxQiID4BzMGUdRCqdSWEEN4KLG0TihA5B/hPYKBMIYQQwkeBpWABESpfAp7EeLWEEEIIrwTWgzKFIOwtw3uBnWQKIYQQPgmsNzCBw0IQcJbhLFTKQQghhEcCCwks0SbcCPxUZhBCCOGLwHpE5hBtwlkSWUIIIZwLLFtx+AHU+FlIZAkhhBDNEVhlFYdvkEmERJYQQgjRS4FV0S/rVplEtKHIUuC7EEKIYgVWRb+sh4C/ySyC9gt831tmEEIIURQDKOv8bsXWtcDZHoztCeAU4Ok4jVZkSd4JDMY0ti0F568D+tmPdfb/VqJYsp4YZG3ZH/gX0AlsYL+3Kaau1PbA+sC/ARu2wTnfDuyhFwghhBCFCqwyT9ZvPRBYLwDj4jRalSV5aWwrJJyaxir7UWJJDz+/M6aIZwSMxdScCo0NMcVIx0tkCSGEoKgyDWWxWK8DUx2P6zJgVcX2pXDHLMw22zEY79YuwAnAtMDOY2s7t4QQQohiBFZJzFih9QvH41pYLvwqAvGFB4IrTqPfAp8GPgZcA8wPZOzjgQt1CYUQQhRVaLRcaN0PTHc4rh3Lx1PNkyXR5Zaya7II+AawDTAhEKH1feAgXUUhhBC0OgaL6plXoxyN63uYmlwv1fCAF3iVrXcj8DVM/akRHo/198BfS3OsLMkjVJYDQzUFw6CV863Vc7n09+M02gD4ACa+8cOY8JKXsiRfE4p94zQajEn4AdiYdxN/OjAxv6uBN7IkX+3C1iJs+s0+s0sN9WHMVt1Qh1mE43hvMLYIiyOAMzCxTz4yDbPNGfrDemfgNkx2KPbhMKRMeFGQJ3yIh6JzAO9mGPeWzhp/7mVgeZbku4Qu7uI0GojJKN7W3sc7YrKLt7afB5f9+JQsyQ/18Hw/BuwKDAM2A3awQmoHYEtqD1tZgPHYrwbmAvPsdZ7jkwBuh5eEdrFDdwIL64U4y+HYbwW+LJ0SPP8OnOfp2L4HXBLyAmK3yzex5Upw6A1/GzgVU17FFd/GZIuutQ/RtT38/NoWjWNdluSv2OtzEmY34IMV9mqWp6d/xbn8D3BNluQPNDifRmFiFXcD9qlDWE7OkvyrBc359co9ZeX3qh3/HvYFfVvrJPgXsFHZn1hZIQ4b4VVr+9eBmcAM4LEsyR+twwvYqzUmTqPjgTE1zA2aONdK82x+luQ/DmR93AM4uey/36kWItVkOy3sSWCtj0lpd7n18EvgNGmU4BX+cOA+D71Zr9sHyUvt9gblQiDGafRD4AKH5jgsS/L/8Oz63ITZNi+Sz2dJfmcdc2U7jDf3xF7co048WHEaDcJ42b4AfB6z1dfp6HKvwHi5HgLuypL83lruw0bv1TiNxuEu638FMDxL8lUBrJGPWpFVJEf0pODeBC5ybJsfAt6rZNF1EoJdOBZgYrLO8GyoQ4CrQk6a6GphduR9e8exOf5Xd1/XnovKORGn0cg4jVLgYeBij7fzq60xu8dpdBYwB3jEvohv51BcYY+9M6aMzY1xGs0FfhGn0Z493cMNrkGPAYsdnuuEAObJ3pjyQkUyG7ino4bMvHNxnxl2LmabSQT60C+bW+cACfCiR8P9dJbk39VVawpr+/jxQxEnu8VpdDMmW/wLrRAlzXppqfw7VljdjPHc/BTY3FMzD7WC7zTgT3EaPRynUdJMkWWD73/l8ByPCWC6Jw524bIsyV/rqPGN95seGOk84Ceqi9UWguuPQIxfFdXPcPzm68XDjBZ5ToQ382RgnEY/x2zXH9bKudgsD2pZbNXBcRo9jImxOyyw+7UT2Au4Jk6jR+M0OriJXudrKCaZpRqf7Mk753i+b46JCy2Sldhai7UGeeUeVHcHODtL8h8pc6EteAnT5/BWj942T2y3bULkQdJW/bv/3gqzFXhGK9/oK4pWN2sr8BbgKitSQi5H0omJBbrVerQO6e3LkvVi3e/wnE712N6jHRzzz6UEl3qi6I/2xGDnA6c3evPK++UVKzBZor5s//4c2EKXRTSZt3HkSSwTO0dierzuFIroj9NoWJxGV2E8VoeE7GHugr2AS+I0mmQ9LXXZrfQss58nOuzVu7NNNPCR7zp4pt1EV5Xcu7mYSzwKUD4nS/Jbym+4ijc1VKA0KH4B/MSTsVylyyFoLy/W8cB1gY35SEwm3jdp7wK6GwEnAdPiNPp6PY6B0rPMdjuZDixzdA6fAL7l4RwagynTUSTzyrN3O+p8G7kMf+JmDgEex/TCe49wkogKEl8SGfYD5OYUzaSfqzZocRr9wOcG51UC2AfFaXSdFYTD+9AcGYGJz7ouTqNhDToGLnU4/s94aNMjKd7r+WC3vQjp2f11lEcG3BoTGzZBW4S0iyfrdA/G8RNdChE4A2xNsl8SSOygFRYP2gdjX+VI4J44jUY08Nz6A+6C3Xe1BV59Cm5PKL5zxEXl16yjAWGSYyPkPRJZ12NSVQdVjlmCKjjOw33ds/2AvXUpRMAcg9uCr/U+EA/GBODvpEvHTsBjcRpNqKHsTblYXYW7YPdOYKxHNjzBgffqjizJXy2/Zh0NBiyei6mf4hOnYtoVHNCdW1Xbh0FwPu5joY7UZRABs28oWY5xGh0GXEHtfQH7Ap3ARXEaHVtnLLHLwuDH2t6VPjDGwTGvposmrfWyChMD9d+eTcqtgLuAazFNPSWown4Df9zh8b/ZhllLwg3rZIIuOR7TC3SoTFFVZJ1vkxSo0RHyKHC3o/EOovhtuWqiPaH4+L1HqvWg7OhlHaOzPZ2YRwFPYmJphus+DZbPYPp64dDNLAQBBrkTgPfqWExnB4mr7kXWOSVPVo0hL3fgpmRDJ/BZDwosH8R7G3tTQGmG8+kq06QXXIpf8VhUFI48G5iGKS+xRWiVthU/xgrc9ro6QV4sIWh6FX8bX3SF7q/6PFk17sj8B7Da0VgPK7Kye0WSBHEabezgmbEWE57UdIEFphnzYx5Pzo9jCkjOAK7ElnUggErb2t4E4AHcbRVuDHxSl0CIpr5sjsIkJon6PVkH1vDcWAX83uFYD3R47NMcHPOmUuX2VggsgK/gV1+5anwUE9ezELgHOKIrsVXKPlQWojeevdcdDvGnmgNCNO1+H0aVYGBRs8iaFKfR9pXPpipr1D24q+z+NUfB7oMciLvlwM10V4yO5vSV+6LDGhz1Mh64wYqt+2xH9tHlnqPyD0Ghnr0qi8WWDoc4LkvyIbpSQjSFu4AdZQZ6k8h1EzCou+LatrL7vY7GuIWjHoDjrH2K5IUsyWe0WmABzAJOCXDC7gechWnLsA54FLgF0/g3wdRD2lL3tTPRdTqwHe4znYQQ9Kocw3eBXWWNXrMrtTVYnupwjN/qI02nf9XdTsyAJh/sRmAwJu02VPawH4d08f2lmADCd+zHYvu5XLQu5P1p2kvs544q31uH8QJS5XuuM5D6VaSZ98fEJg2o8j1609ajgvWBnYH9PZgTJ2KynYSglcHfbcwo4GKZoXlrUpxGd1lPVVfcjknwcpFJPzZOow9lSf7PAuP6iu47uBCTRNflTteAZr6hZElOnEa/yZJ8IKYidztS2Sdqe93rbc9GGE/mQzKFEA1xkUxAs+OxLo3TaGyW5Ku7CnaP0+gPuGn91YnJwr6wwN7ERWekpjahgJZvEZZ39sbUhDhD94BoI8bIBEI09PJ9PLCnLNF0RgJH9/Azd+O2WHMR82sT3HTe+DUNbM00i3MksgRt1npEGYVC1J01eKws0TIuto2N6aay+xRHY9swTqPdC8g034vit+GnZEm+uDCB1YURzsEEKQsROuOATmWVClEXP8DfBs6LgduAn2E8QYdgvEJ7YnrafgM40/7My/ibJX9iD9+/AjelbjrpJvC81pfVGtbcEwveHlwOTK7lBwcUUEjzPEwg9Hlaa0TgfA6TyCGE6PmlezP8bJr+R3sfT+sphqYivnisFWEH41d7n6Nt7POSLr4/A9M/eIijyu7HVIsTa+RltXQtyr7el+Ibm7+QJXlaORYK3iIs53zkyRLh8/9kAtGHWQ4ssx/LeX8hy3859izQQ9utKcBeWZInWZLfVou4qniw358l+XHAbpig/eUetYX7drlXqNw7ZMXN5Q7H921a58g5ysH5PFyrQBzQrOzBGpAnS4TOgTKB6AM8j0nxn2tFxAvAPys9JDa4eH1MaZ5OoH/F82CsJ+ezEDgzS/LrG3muVSniuRg4OU6jB4BJ+FEncUKcRr8sicYqz+SrgF/iribWhS3ykB7gQKhPrPWHBzS72WLp6y6E1/nAm8BvtIaJABmKqVK8SKYQbcYi4FLggR5qK5Wv/a8Ar3Tx8DsYE8/kmvnAQVmSz212H1i7TTQTU53edZzZZsBhmHiramNdGafRbZjtzaLpjNNo9yzJZzbZifMdB1u1U7qa87R6i7C70v1lXIqJZflvrWkiQJRGKNqJxZgOHNtmSX5hSVzVmy1b5ecP8+Dcngb2r1dc1fnMWwx8xh4LD1rA0UOozgpHL6bHtSC+e++Cz2NpvRmZHY6a+f4JU9n3Ba1vIjDUR020C2cCO2RJPilL8rdq6RHalfCq2MkYhh914z6bJfnCJjSb7/bnsiRfCnwWWOD4fEdb23c1zpnA3x2NbVypAXQzSt3EaZQAIwo+h5dtHJ4/AqubZr4v2dT357XOiYDYWyYQbcARWZKflSX5m/Ws5TU+XHYvMIGKLoLxJ9RSp6jWh2VPP2eP9Q3ceIjKn+c9xYle52hsW2K9mk0qdeMik/PCZvSAo0DR9RLwKWqoiCqEJ4yWCUTArMDEJN3UwmPsj5uSACWezpL8RgfPtb/gtsHyEODTPfzM7xyO74AmFq89HEfZg94LrApP1oo4jU5FVd9FOOwkE4hAxdW/Z0metvg4n3Z8jl9zePyTgZUOj39wnEaDuhGBrwFXOxrbPnEajWxCiNEpDsY+0W4FhyOwKtJgzwH2AZ7TOig8ZxeZQATI9VmSX9nMlk+VfydOoxEUHxtDRZbXUtw905YCv3d8nbelZy/WckeV3Q/s5XzbAPgixW85T27knunAr8q/ObAf8KzWQiGBJUTTmE1ZDEmzWj5V+TujHcdeTfagndVk3MZi7VBNDJT+L0vyGbjLejyqOw9bDfNrX2B4wWN+PkvymY3MK68Elj2BRcB2aMtQ+MsgmUAExs8b2eJogOEOz3FuluQPePAcm4nbnZg9a/iZGxyNbXNssHs9HqGyn/2hgzFPpBdZB75yDqbmkEo5CN/YQSYQATEjS/LbmrUt2MNDcBuH5/nXessvtLAU0b0O7bBTNW9Lxf/9J+62UsfX60W1vSB3p/jt54XAI+0osAAeAmKUZSj8YiuZQATEtGZuC/awA+Fy+/zeZm+B9qKEw30O7bBpdzXLyvoT/j6UYHfeLV47uOCx3mY7FtCIeO8IYHFYZLMMvwU8rrVS4EfLnPVlBkEYmYPXFeHRsYUkhzg8z6Ue2X2ewzis9TCtc3rytv3Z0Rg7qbMQrS3NcCrFx/RdUnnveFVotFlvCHEavRyn0bPAMcCVlLmDhXAksoTwnReyJJ9fkEdnqMP74p9Zks/x6Jm1ynF4y4dqaGf3EPCgo/F9t1TZvUb2cTDGqcCi3tw7AwirRcmYOI32AFYDbwHP2KDG3TEFS4Uoii1w3xpDiJ6YXuCxPurwPJ+AbhsDu2CZo+P2xyQbzKe2bdUv4CbYfR/g7hp/vujaVyuBKb2dSx0BLRTbYMrtb2MF1WhMOuq4OI3eAI7GdBJ/QmuqKEhgCeE7Mwp+sLtiJeBMXHWxBesqk7AfNcQq2TFPdigEj67RtmOArSk+I7XXBXkHtEFq/AhgSJxGW2O8Wm8Bj2dJfi+wG6Z3XKfWWdGCRUwI35lPsV6JFY7W21V4UDTbE9YBa8sEynpZkq/pYsyr4jS6AtP4u2gO7kr4VdjzSAfB7Q/TpOaQoTCM7vf+t8TUz9oN+FScRkfFaTQUOAn4GSagb4nWW9EkNpUJRAAsLPBY/3L4MvsPXer3iaySkFpDz9XvVzjy/B3bnVi1we0JxQe3X9SMPzSgjbdkPgZ8JE6js4E37QR6KUvyKzCF2HawokyIRviATCA8Z1Flijmt3yJ05cFa66H9+4dw7CzJ58VpNBU4xME4v4dJWqOb2Kui59NDzSrKG5IHa0CD6aBbWDG1NzA6TqNj4zQaDPwIOA0T5CfPlqiXzWQC4TlvNFq/h96l4OuFx/C2w2PXKzivcTTOjeM0GkXXMWIusgevaNa9EoQHy6ZzfqCJcQID4zS6ELNv/xqm0vGlmMrxw+yx+tsbpD+CIlzZvfwbHyp4zK/p0gnPebPgOKHVuPNgbeyh/QcTiMDKkvy+OI1mATtTfE2sU4FDq4irAyk+uP3xLMnvc+kVwlFNjyFNvqidVmyVLujuwNIsyY/CNEYVgWCDOMfGaXRkgYvXs54FtgqBB0VNXXmwhuPHOlQe7+SqGHEnNquyTi4DLnBwDcfGaTTI1g4rr335pYJF6krgXBxvuxHI9iANxHj1j9NofJbkElgBkSX5mjiNTgB2KpsvzXTPdwDvlH39T+BOWV6I9+Ay1GJDH9Yh/Gmp9T8N/M4U4DzcxIt9BRuLZb1Xw4AJFL+l29QyTx1aE6jMDNu06GahgmYVOdzcfmxS9u9mfGxa8fU2wKsyuRBUerBc3RebxGm0Of541QcBIx0dfjmwpF4Pu/Ug3Y8bj9tBFVvZP3IwjuubnRQigUX14GVt/wTH20oLFwKXHpy3cFePajCwl0fm2M7hsddkSb6kQSfBRY5KNuxvu7SUxGnionJ7s/+oBBZBBEsKvwJKVwBzZXIhcFl3q5IdPLLD/g6P/XSjToIsyR8FXnY07qPs5/GUxUcXxLwsyaf3VYH1jwaD9hphhNZIQgtyB/hIgYdcmyX5alle0P4ZuvXylMPzPdQj2+/r8Nhv9fL3L3c07i/HabQBcLqDY09sxR/tCMT1vIritoCGxmm0idbmoMTVxhRbTmOmLC9EVZ5xeOwhcRqNxP2atJljgfVgL3//D5g4rsKvHybQfUeK3x58tM8KLMvr9E1Xs+i5B9hHgPUCekMUol150eGxhwIne2CDkxwff25vGlZbh4arLOmDHRzzRmApfVxgFVnYcbiyCINiGMXWbnlKJheiKs/iNsN2fJxGu+HOezUMONrxNXisCQ2rL+9Dc/aKViW1hSSwlhZ4rG20TgbFJm08F4UgkK16siR/DTep/pSl/J9WcHsgHPfOK+fO8oKdNL4zMIMWZNV5yOQsyVuWsBSSwFpc4LG215IZFFsQgAteCNp7q77EfY6Hs1+cRmOKLrdj63B9w/G5P9obYVnxe/fipmQDBWaDt1REdoTaV6vFjFAdrKAo2uM4SyYXossH+Z9xX7Ll2jiNPlrw1uBdjvsPriyJ20afX6Xfs9f19gKz913wQpbkqQQWhce9DIzTaCtEKOxR8E2pEg1CvP+BXPq/V4DbHA9tOJBZ4UNBgdI7OT7n57Mk/2tvt0bjNCJL8lKw+/VtPH0favUBFINVnY2APbV8BvEGvSPFVk1+QlYXotstQoAZHgzrk8BdrRJZJRETp1EKjPXgfKeVxcI161r+uY2n7a8ksHhvdVra0ysiGmfLgo83RyYXosdtwqs9Gd6ulSKrGYHvpYbEcRo9AHzBk3O9pNmhLbayezsGu0/JknypBNa7F3o1xW4TjkWEQNEp2a/I5KJO1tL3tglfA67xSGQ9HafRd5sY+P51TDmEfTw5x4lZki9r0d/+U5tN2ZXATUUcKLRehLMoLqth4ziN9qzxbU24e2Pel2JrsT2rKyBETduEv8VNRXC6KN9wcZxGD8dplMRptEm9a3mcRoPiNDoyTqOHrXjc3JNzWw5MbuHfvx2Y30ZT9fksyQsppDogMMPMAY4s8IYcSUUJfWUXevXGPAwTZ0GBvd1UokGI2u7TmXEaPQQkHg1rL+C/7Iv6HXEaPYbZGZkFvFXhjRuEKQGzLRABn8MEz/vG/VmSz2zl7lGcRlcBF7bJ1Jxc1IFCE1gPW7U+tKDjjQYu0VLpLbsXOBdKAn+VzC5EzZzvmcAqf4E+suKFfX6cRssxW7obASMCsfFFBRzjvjYSWLcUdaDQtgifprimzwBjCkzzFfUTF3y86fJgCkE93o/p+BPw3hMjMB6uKCBxNdEGorf6Os6hPUo2TCwiuD0ogVWWeroa48WiwHINieKuvGVMwcd7UiYXou5YyZ8Bz8siTedVYFKB8a6XAcsCttfyIrcHQ/RgQfFp8t+T18LLxTsBdin45pTAEoL6YiWtx+Ac2rvtCg7avPwsS/KX6yid0avEBdufcDlhV26fiQRWt9kp9xR8+A2rZRMqo9A5Bzq4OefL7ELUtgZWlG24AdPbTjSHeVmSX9mNvVt13MsDttkFRT+zO0K7ge2e/myKDYY8qca0ZFFc36/P47BVU5xGEtgCeanymr5n75XvAwtktV6zAPiyo+fRDYTpxVqBgxjajkBv4D8U7G4eG6fRhrqvvWFPis0eXAHcUaVXl66EEDWu43ar8BRtFfZ6LTq7yEDtinVvNTA1QLtd48JmHYFOsqK3avoDh+ve9obTKL4S95xm9PkSoo8LrRT4MWHH8riOu7rW8TgmElaw+3Lgdy4OHKrA+kvBF7gT+E6cRoN0j+NDcPvWBR92UZbkSyqFlbYIhWhIZF1Be6T8F80fgd+4WnvKkhZmAm8GZLe/uoqf7Qj0Bl3lIJtwOHC07nHn/BAYXPAx71MMnhBN5WzgfpmhZh4BTi4TOa7Hc3lAXj9nY+0IeMJd5OCY31HhUVx6rw4EtnNw6DtlfSGa/pJ8MPCgrNEjDwIHZEm+0qOEs2uBhQHY7jm7LS2BRf31sF6geC/WT8sm3Hq69wvlBxTvvXq8iErJQvRBkbUSkw38iKxBd56rg1yLqyo1sVbivwdyBfCAy/JKHQHfnKuBGx0c+tg4jfa2GRVrdP8X9vZ0MLCjgxt0qmKthGipJ2t/3OxI+C4OJgL7Z0n+uqdjvMJzG64FLnUZ2tEReGG7qY5Sfn8NDGy0AJ9oiFMp3nu1FrivdEPqmgrRmpflLMlPBo5TCQfAZL39MEvy71tHgq/XbQYm8N5X7s+SfInLAXSEXNjObt24cFOOxNRzaagAn6hPSMdpdCym9lXRLMiS/CFdUyEKqbF0JSaR6MU+bIr5wLeyJL86oMxGX5niegAdbTAhXbkpz4rTaA95NVorpG1Sgatr/LCuhAiYfiHd71ZkpUAE5MBK+pbXajIQl4KyA3m23Iqfwe5PZEl+mwRW7996pjl847mMHrYKRa+3gV1m8P1aAlqIwussvZIl+T7A6cC8PnDq84DvZ0n+1fItrRA85lmSvwlc5+HQrvVhEB0hNxQtm4CXOBrabnRTIVYP5157r463NnbB5CzJF3e1yOnaCtHydeC3wDjggjY+zSnA2CzJQy68ejd+xc4tp6y1mQRWLxqKWq7HXRPR8VYIVPOuaZXsXUPncxzeoLd2J6J0bUUADAjYc126z5ZmSf4j4FPAbbTHtuEKTOxSlCX5oVmSLyNsITwD013FF25yHdzeTjFYpVRfV3E6nZh4rAl6ADdVXN1pbeuC57Mkv13XUATO26EmMFX53vQsyb8E7IeJVSJgj9X4LMmT8gSaNmCqR+LVm/nR0UYX+He4a0A5FLgoTqN9taY3hZ/ibmsQ4GJdAiG8jLmdkSX5V4FNbe2sF4HXPR/6Aow3/lPWYzW9DS/PTcASTyq3T5fAak1V4F86HEIncFWcRttrKWwsZilOo1Lc1bEOhzobeFwxVqINWEcbxmaWbR2eDOwCHA+kng33FYy36mhgZJbkZ7SpsCov/H0hfbOFHm2xR18D1wDfwbS0ccEngLviNPpcluRztb7XvWV6rMO4qxK/z5J8oa5YXV6F8v9y2d3gZU/N9JZ9u/9w2csY3WxxNPqCV/n7K/pCkVLgFuCWOI02wMRqjQVGA9tgSlWsq8HuvaEUF/Y8prTLQ8A0G7rSl5hq5/lmjo6/GHjAp/jnAW220K+K0+hy3HqyhgMPx2n0TR/qcATWCsd164UZmLouonHhfIMjb8I6u5694aGZvg+cidkx6I/pENAq+gP/a4+1ro/NxdfiNLobuNvW1doMGAHsYT/vCmzeJKE1HdMn8GXgOeCxLMn/Xs/Dvd0SobIknxen0Z7AOw7u/X5AR5bky3zafeg3+8xR7fagHmjfJDbGfbDdT2yqsehmgYnT6EBMJmin4yGdkiX5JF0ZIdrPw2ofvIOtyFoP2ArYyIrSjwDrAx+0AnhthVf0FSvenwL+0VvvVDtmmbs4J9/t2HYCyxr9ZEy/QDyoxzEpS/LztNR1ea0SzNaua3E1B5Pds1RXJZyFT+VQRG9iQV3M0dIY2mXe+nYP+jSedhVYA+2bxlb4kTY6H/hi6eEdp9F6WZKvgT7vuTocUyS204NhfUlbuhI4ov3moOaokMBq/k03CnjcoyE9CZyrhzjlVdrPwpS4cM2MLMlH6aoIiVPZXsiWqEwDPQXcTcevgnS7YqqD/ypOo437aruVOI0Gxml0FaaP41BPhnW4loKg59R6IZYn0UMpLNuX/p5KuEhcIQ9WBLAlJnX0E54NbwZwQaPeLJ8mdZ1ZMyMwBelGenQtLrCtOIQQQggJrDpE1tcxQdQ+8gjwiyzJ7+wDbzoTMBXSB3s0rOnAF0LvBSaEEAJtEVJwjZ4sya/F395VewHXxGl0q40Za4oL2icXdpxG28dplGLKMPgkrl4Fzpe4EkIIgTxYDT/kNwEyYDuPh7kSmGsf+ne1SSbnKZhAdh85M0vys7QECCGEQB4sGvVkvQKch6lL5SuDMR6ta+M0mh6n0aQ4jYb56JXqzmNmg9h/YMWirwLmSWBiKF5AIYQQ4TGAvtNG4aY4jT4LHOb5UIfaj5HASXEaTcEEhj+BqSbsq8j6EKaX4Cm460VFjf2qPm97mAkhhBASWE3gGExG4ciAxnwI8GlgbZxGzwEPAndmSf6oy8xC6+EZCOxfNsZOz225AvgxpiFpM5pTCyGEEPTZGKwqBUjvwPSgCpnFwP3APGAm8GqW5HMKsN/mwDjgAGA3THPrUDihnt6QqvEihBBCAqs+kXAYpkXL0DY6reXAP4EXrfh6CnjNfr0WWASsyZL8tRptNAzYANgWs+W3PbAzsEWg4vTKLMmP0y0vhBBCAqu1IusM4Od98NQXAm/xbpf4EmsxXeW3sJ+3aqNzfhLYR3FXQgghJLAKqDYep9HN+B/0XiSvA0Pa7JzmAftnSb5Yl1cIIQQq00BTC452wbeBxzQN/j/tJq5elLgSQgghgVW88FoFHATM1lRoO0rlGBarxpUQQggJrOJF1jJMqYEnNR1oJ8/V+CzJ56oEgxBCCAks3FQftyLrc8ACTQnaIYj/uK7ElRBCCCGBRXFxWVmSL7UiS56ssMXV+CzJp8kUQgghJLD8EV1zrciaI2sQYszVAVmSPydTCCGEkMDyT2QtBcYDs2SNYJgF7KVtQSGEEBJY/ousz6LswhB4BjgwS/Ilyg4UQgghgRWGyBoNXA2slEXwsXHzFGDvUikGZQcKIYSQwCKI6u+rsyT/FvAjiSzvxNW5WZIfqusihBBCAoswswyzJL8S+DLKMPSBF4BjsiSfWHmdtEUohBBCAovgvFnTMHFZdwKvyiq48FrdCYzJkvzWLuqZyUpCCCFQs+dwBdfxwI+BTWWNQlgOTMqS/Lx6G3oLIYQQyIPld8X30r+zJP8tMArQE731PAEk5eKq2lagxJUQQgjkwWorAXYy8B1guKxBswuHTgJuyJL8NZlDCCEE8mC1tyeL93pOJgH7AL+RlWhWrNUtwB5Zkk8qF1dxGimQXQghBPJg9T0RNgy4DBgDdMoi1Btn9VfgjCzJp8scQgghkAerb3qvqsRmLc2S/CDgUEwRTNEzr2Ji2Y7Oknz/esRVnEbryXxCCCGQB6vPCbM9gZOAQ2QNqm0FPgtcnCX5LTWKqTUKZhdCCCGBJUriYDPgVCABtpRFuA24IEvyGeUCKkvyNTKNEEIICSxRa5HS0r8HAeOArwN70XfitJYDq4HrgHsUYyWEEEICSzRVZFUExI8DJgA7A0Pb8NQXAo8BvwbmZUm+WkVBhRBCSGCJogLoN8d4tMZhSj58GPgQ4Xi4VtjP/wKWAfcDjwJTsyRXM2YhhBASWKL13qsafmc4MBrYA9gO2AHYyNNTfAoTrH4vMLc8rkoIIYSQwBLeCrA4jTYAtrJCazjwCeDj9v+K3Fp8EZgJzAWesYJqrq6iEEIIIYHVbgJtZ2AIsIX9GGKF1/rAR+zX0H324t/s55XAG8ACYBXwMvB3YBawIEvyVU0O+lcslhBCiLbk/wAYeLkaAyuUVwAAAABJRU5ErkJggg==" alt="Trov"><span>Performance Brief</span></div>
+        <h1>2026年8月20日投放日报</h1>
+      </div>
+      <div class="masthead__meta"><span>数据日期<br><strong>2026年8月20日</strong></span><span>生成时间<br><strong>2026-08-24 12:53 北京时间</strong></span></div>
+    </header>
+    
+    <section class="summary"><p>当日 A02 记录 1 次、A03 记录 0 次 Meta 购买；Shopify 共 2 单，其中本投放 2 单。</p><span class="readonly">只读生成</span></section>
+    <section class="metric-strip" aria-label="核心结果"><div class="metric"><span class="metric__label">Meta 花费</span><strong class="metric__value">$65.18</strong><span class="metric__note">较上一期 +$52.79</span></div><div class="metric"><span class="metric__label">Meta 购买</span><strong class="metric__value">1</strong><span class="metric__note">较上一期持平</span></div><div class="metric"><span class="metric__label">Meta CPA</span><strong class="metric__value">$65.18</strong><span class="metric__note">较上一期 +$52.79</span></div><div class="metric"><span class="metric__label">Meta ROAS</span><strong class="metric__value">2.22×</strong><span class="metric__note">较上一期 −8.07×</span></div><div class="metric"><span class="metric__label">Shopify 本投放订单</span><strong class="metric__value">2</strong><span class="metric__note">较上一期持平</span></div><div class="metric"><span class="metric__label">本投放净销售额</span><strong class="metric__value">$289.98</strong><span class="metric__note">较上一期 +$17.49</span></div></section>
+    <section class="context-band" aria-label="当前账户信息">
+      <div><span>当前窗口转化数量</span><strong>5</strong></div>
+      <div><span>最近重大修改（太平洋时间）</span><strong>2026-08-19 03:50 PT</strong></div>
+    </section>
+    
+    <section class="section">
+      <div class="section-head"><div><span class="section-kicker">A02 / A03</span><h2>广告表现对比</h2></div><p>数字均为本报告日期范围内的结果。</p></div>
+      <div class="creatives">
+    <article class="creative creative--a02">
+      <header class="creative__header">
+        <div><span class="creative__code">A02</span><h3>A02_GA2_FREQUENT_TRAVEL_HOOK_DUAL</h3></div>
+        <div class="creative__traffic"><span>CTR <strong>9.5%</strong></span><span>CPC <strong>$0.72</strong></span></div>
+      </header>
+      <div class="creative__outcome">
+        <div><span>花费</span><strong>$65.18</strong></div>
+        <div><span>Meta 购买</span><strong>1</strong></div>
+        <div><span>CPA</span><strong>$65.18</strong></div>
+        <div><span>ROAS</span><strong>2.22×</strong></div>
+      </div>
+      <div class="creative__visuals">
+        <div><h4>站点漏斗</h4><div class="flow"><div class="flow-row"><span class="flow-row__label">链接点击</span><span class="flow-row__track"><span class="flow-row__fill" style="width:100.00%"></span></span><strong class="flow-row__value">90</strong></div><div class="flow-row"><span class="flow-row__label">落地页</span><span class="flow-row__track"><span class="flow-row__fill" style="width:95.56%"></span></span><strong class="flow-row__value">86</strong></div><div class="flow-row"><span class="flow-row__label">加购</span><span class="flow-row__track"><span class="flow-row__fill" style="width:12.22%"></span></span><strong class="flow-row__value">11</strong></div><div class="flow-row"><span class="flow-row__label">结账</span><span class="flow-row__track"><span class="flow-row__fill" style="width:8.89%"></span></span><strong class="flow-row__value">8</strong></div><div class="flow-row"><span class="flow-row__label">Meta 购买</span><span class="flow-row__track"><span class="flow-row__fill" style="width:2.00%"></span></span><strong class="flow-row__value">1</strong></div></div></div>
+        <div><h4>视频观看进度</h4><div class="retention"><div class="retention-column"><span class="retention-column__value">32.4%</span><span class="retention-column__track"><span class="retention-column__fill" style="height:32.38%"></span></span><span class="retention-column__label">25%</span></div><div class="retention-column"><span class="retention-column__value">18.8%</span><span class="retention-column__track"><span class="retention-column__fill" style="height:18.78%"></span></span><span class="retention-column__label">50%</span></div><div class="retention-column"><span class="retention-column__value">14.4%</span><span class="retention-column__track"><span class="retention-column__fill" style="height:14.36%"></span></span><span class="retention-column__label">75%</span></div><div class="retention-column"><span class="retention-column__value">10.5%</span><span class="retention-column__track"><span class="retention-column__fill" style="height:10.50%"></span></span><span class="retention-column__label">完播</span></div></div><p class="watch-time">平均观看 7.0 秒</p></div>
+      </div>
+    </article>
+    
+    <article class="creative creative--a03">
+      <header class="creative__header">
+        <div><span class="creative__code">A03</span><h3>A03</h3></div>
+        <div class="creative__traffic"><span>CTR <strong>—</strong></span><span>CPC <strong>—</strong></span></div>
+      </header>
+      <div class="creative__outcome">
+        <div><span>花费</span><strong>$0.00</strong></div>
+        <div><span>Meta 购买</span><strong>0</strong></div>
+        <div><span>CPA</span><strong>—</strong></div>
+        <div><span>ROAS</span><strong>—</strong></div>
+      </div>
+      <div class="creative__visuals">
+        <div><h4>站点漏斗</h4><div class="flow"><div class="flow-row"><span class="flow-row__label">链接点击</span><span class="flow-row__track"><span class="flow-row__fill" style="width:0.00%"></span></span><strong class="flow-row__value">0</strong></div><div class="flow-row"><span class="flow-row__label">落地页</span><span class="flow-row__track"><span class="flow-row__fill" style="width:0.00%"></span></span><strong class="flow-row__value">0</strong></div><div class="flow-row"><span class="flow-row__label">加购</span><span class="flow-row__track"><span class="flow-row__fill" style="width:0.00%"></span></span><strong class="flow-row__value">0</strong></div><div class="flow-row"><span class="flow-row__label">结账</span><span class="flow-row__track"><span class="flow-row__fill" style="width:0.00%"></span></span><strong class="flow-row__value">0</strong></div><div class="flow-row"><span class="flow-row__label">Meta 购买</span><span class="flow-row__track"><span class="flow-row__fill" style="width:0.00%"></span></span><strong class="flow-row__value">0</strong></div></div></div>
+        <div><h4>视频观看进度</h4><div class="retention"><div class="retention-column"><span class="retention-column__value">—</span><span class="retention-column__track"><span class="retention-column__fill" style="height:0.00%"></span></span><span class="retention-column__label">25%</span></div><div class="retention-column"><span class="retention-column__value">—</span><span class="retention-column__track"><span class="retention-column__fill" style="height:0.00%"></span></span><span class="retention-column__label">50%</span></div><div class="retention-column"><span class="retention-column__value">—</span><span class="retention-column__track"><span class="retention-column__fill" style="height:0.00%"></span></span><span class="retention-column__label">75%</span></div><div class="retention-column"><span class="retention-column__value">—</span><span class="retention-column__track"><span class="retention-column__fill" style="height:0.00%"></span></span><span class="retention-column__label">完播</span></div></div><p class="watch-time">平均观看 0.0 秒</p></div>
+      </div>
+    </article>
+    </div>
+    </section>
+    <section class="section">
+      <div class="section-head inventory-head"><div><span class="section-kicker">Inventory</span><h2>库存与变动</h2><p>库存变动以相邻报告快照为准。</p></div><div class="period-sales"><span>本报告范围销量</span><strong>2<small>件</small></strong></div></div>
+      <div class="inventory"><div class="inventory-item"><span class="inventory-item__color">黑色</span><div class="inventory-item__figures"><span class="inventory-stat"><span>库存</span><strong>66<small>件</small></strong></span><span class="inventory-stat inventory-stat--sales"><span>销量</span><strong>0<small>件</small></strong></span></div><span class="inventory-delta inventory-delta--flat">— 0 较昨日快照</span></div><div class="inventory-item"><span class="inventory-item__color">灰色</span><div class="inventory-item__figures"><span class="inventory-stat"><span>库存</span><strong>104<small>件</small></strong></span><span class="inventory-stat inventory-stat--sales"><span>销量</span><strong>1<small>件</small></strong></span></div><span class="inventory-delta inventory-delta--flat">— 0 较昨日快照</span></div><div class="inventory-item"><span class="inventory-item__color">白色</span><div class="inventory-item__figures"><span class="inventory-stat"><span>库存</span><strong>48<small>件</small></strong></span><span class="inventory-stat inventory-stat--sales"><span>销量</span><strong>1<small>件</small></strong></span></div><span class="inventory-delta inventory-delta--flat">— 0 较昨日快照</span></div></div>
+    </section>
+    <section class="reconciliation" aria-label="Meta 与 Shopify 数量核对">
+      <span>数量核对：Meta 购买 <strong>1</strong> · Shopify UTM 订单 <strong>2</strong> · <strong>相差 1</strong></span>
+      <span>两者归因口径不同，仅作数量核对。</span>
+    </section>
+    <footer class="footer"><span>Trov Meta × Shopify</span><span><strong>writes_performed=false</strong> · 不含客户资料、订单号或原始 API 响应</span></footer>
+  </main>
+</body>
+</html>

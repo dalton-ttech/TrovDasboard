@@ -1,27 +1,35 @@
 # 静态数据发布
 
-`public/data.js` 和 `public/runtime.js` 原先是空回退文件，真实数据仅由本机 Node 服务动态提供。直接把 `public/` 部署到 Pages 不会运行 Node / Python，也不会自动带上本地数据。
+站点为 <https://trov-work.pages.dev/>，Pages 从公开仓库 `dalton-ttech/TrovDasboard` 的 `main` 分支发布 `public/`。用户已明确授权真实业务数据和 HTML 报告公开，无需调整仓库可见性。
 
-## 导出完整页面
+Pages 不运行本机 Node / Python，也不会直接访问本地 `data/`。因此必须把成功快照导出并提交到前端目录；只提交前端源码不会更新线上数字。
 
-运行已配置 Python 环境：
+## 导出并上传
+
+在项目根目录、已配置的 Python 环境中执行：
 
 ```powershell
 python -B scripts/export_static.py
+if ($LASTEXITCODE -ne 0) { throw '静态导出失败，停止发布' }
+
+Copy-Item -LiteralPath .\dist\data.js, .\dist\runtime.js, .\dist\_headers -Destination .\public -Force
+New-Item -ItemType Directory -Path .\public\reports -Force | Out-Null
+Copy-Item -Path .\dist\reports\* -Destination .\public\reports -Recurse -Force
+
+git add public/data.js public/runtime.js public/_headers public/reports
+git commit -m "Update dashboard data snapshots and reports"
+git push origin HEAD:main
 ```
 
-导出到 `dist/`，包含完整前端、物流与销量快照、日报/周报 HTML。保留真实读取时间；不包含 API 凭据、原始订单响应、观测日志、PDF 或预览截图。导出失败会保留上一份有效输出。静态页面不显示只能在本机使用的刷新按钮。
+导出目录 `dist/` 包含完整前端、物流与销量快照，以及日报 / 周报 HTML。上述步骤只把数据文件、缓存响应头和报告复制至 `public/`；前端源码保持在原有位置。`dist/` 继续被 Git 忽略。
 
-导出产物含真实业务数据，`dist/` 默认被 Git 忽略。此命令仅在本机生成文件，不上传，不改变仓库可见性。
+Pages 保持构建命令 `exit 0`、输出目录 `public`、生产分支 `main`。推送成功后由 Pages Git 集成触发发布，完成后线上页面读取新快照。页面打开和数字动画不会触发 Shopify / Meta 请求。
 
-## 接入现有 Pages 项目
+## 发布范围
 
-当前站点为 `https://trov-work.pages.dev/`，Pages 从 GitHub 的 `public/` 发布。
+- 公开发布：`public/data.js`、`public/runtime.js`、`public/reports/` 下的完整 HTML，以及 `public/_headers`。
+- 继续留在本机：API 凭据、原始 API 响应、本地 `data/` 缓存、观测日志、PDF 和预览截图。
+- 保留真实读取时间，导出失败保留上一份有效输出，不把旧快照标记为刚读取。
+- 静态页面隐藏只能在本机使用的刷新入口；需要更新源数据时，先在本地运行既有只读查询和报告索引流程，再执行上述导出与上传。
 
-选择将现有 GitHub 仓库设为私有后，可把本次 `dist/data.js`、`dist/runtime.js` 和 `dist/reports/` 同步到 `public/` 对应位置并提交 `main`。前端文件继续使用仓库中的源码。这样现有 Pages 构建命令 `exit 0`、输出目录 `public` 均不用修改。
-
-若采用独立私有发布仓库，则推送整个 `dist/` 内容并将 Pages 连接该仓库，输出目录改为其根目录。不要将这些快照推送到公开仓库。
-
-私有 GitHub 仅限制仓库访问，网站访问权限需要单独设置。定时工作流应在现有本地只读查询成功后运行导出、校验仓库可见性、提交并推送；不应把旧读取时间改成当前时间。
-
-本次已实现导出与静态页面适配，私有仓库确认和数据上线尚未执行，定时发布尚未启用。
+每日定时上传尚未启用；目前按以上步骤手动发布。本地定时流程接入后仍应先完成查询和导出，再提交生成文件。
