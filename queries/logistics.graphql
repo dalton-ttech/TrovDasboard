@@ -1,0 +1,18 @@
+query LogisticsOrders($query: String!, $after: String) {
+  orders(first: 50, after: $after, query: $query, sortKey: CREATED_AT, reverse: true) {
+    pageInfo { hasNextPage endCursor }
+    nodes {
+      id name createdAt updatedAt test cancelledAt
+      shippingAddress { provinceCode zip }
+      fulfillments(first: 100) {
+        id createdAt updatedAt status displayStatus totalQuantity
+        inTransitAt deliveredAt estimatedDeliveryAt
+        trackingInfo(first: 100) { number company }
+        events(first: 100) {
+          pageInfo { hasNextPage endCursor }
+          nodes { id status happenedAt city province zip }
+        }
+      }
+    }
+  }
+}

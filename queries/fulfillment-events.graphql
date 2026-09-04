@@ -1,0 +1,10 @@
+query RemainingEvents($id: ID!, $after: String) {
+  node(id: $id) {
+    ... on Fulfillment {
+      events(first: 100, after: $after) {
+        pageInfo { hasNextPage endCursor }
+        nodes { id status happenedAt city province zip }
+      }
+    }
+  }
+}

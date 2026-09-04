@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Trov · 界面预览</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    @font-face{font-family:Manrope;src:url('assets/manrope.woff2') format('woff2');font-weight:200 800;font-display:swap}
+    @font-face{font-family:Noto;src:url('assets/noto-sans-sc.woff2') format('woff2');font-weight:100 900;font-display:swap}
+    *{box-sizing:border-box}body{margin:0;background:#edf0f5;color:#222a3c;font-family:Manrope,Noto,'Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}button,a{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}a{text-decoration:none}header{display:flex;align-items:center;justify-content:space-between;gap:20px;height:75px;max-width:1480px;margin:auto;padding:0 32px}.title{display:flex;align-items:center;gap:16px}.title strong{font-size:26px;letter-spacing:-1.5px;font-weight:800}.title strong span{color:#345bdd}.title small{font-size:11px;color:#6d7688;border-left:1px solid #d8dde6;padding-left:16px}.modes{display:flex;border:1px solid #d8dde6;padding:3px;border-radius:7px;gap:3px;background:#e7ebf1}.modes button{border:0;background:transparent;padding:8px 17px;border-radius:4px;font-size:11px;color:#6d7688}.modes button.active{background:#fdfdff;color:#345bdd;box-shadow:0 1px 4px #1b254812}.open{font-size:11px;color:#697387}button:focus-visible,a:focus-visible{outline:2px solid #345bdd;outline-offset:4px}.preview-stage{display:flex;justify-content:center;align-items:flex-start;padding:15px 24px 30px}.device{width:390px;max-width:100%;height:calc(100dvh - 123px);min-height:540px;max-height:870px;border:1px solid #d8dde6;overflow:hidden;border-radius:16px;background:#fafbfe;box-shadow:0 10px 45px #1a264510;transition:width .28s ease}.device.desktop{width:min(1440px,100%);max-height:none;border-radius:9px}iframe{width:100%;height:100%;border:0;display:block;background:#f6f7fa}.footnote{text-align:center;color:#7b8494;font-size:9px;letter-spacing:.04em;padding:0 16px 20px}.open span{margin-left:5px}@media(max-width:560px){header{padding:0 18px;height:68px;gap:12px}.title small{display:none}.modes button{padding:8px 12px;font-size:10px}.open{font-size:10px}.preview-stage{padding:5px 12px 15px}.device{min-height:0;height:calc(100dvh - 115px);border-radius:12px}.footnote{font-size:8px;padding-bottom:15px}}@media(prefers-reduced-motion:reduce){.device{transition:none}}
+  </style>
+</head>
+<body>
+  <header><a class="title" href="index.html"><img src="assets/trov-logo-transparent.png" alt="Trov" width="98" height="27"><small>界面预览</small></a><div class="modes" aria-label="预览尺寸"><button class="active" id="mobile-mode" aria-pressed="true">移动端</button><button id="desktop-mode" aria-pressed="false">桌面端</button></div><a class="open" href="index.html" target="_blank" rel="noopener">独立打开<span>↗</span></a></header>
+  <main class="preview-stage"><div class="device" id="device"><iframe src="index.html" title="Trov 物流 Dashboard 交互预览"></iframe></div></main>
+  <div class="footnote">Shopify 物流观测 · 投流日报与周报</div>
+  <script>
+    const device=document.getElementById('device'),mobile=document.getElementById('mobile-mode'),desktop=document.getElementById('desktop-mode');
+    function mode(isDesktop){device.classList.toggle('desktop',isDesktop);mobile.classList.toggle('active',!isDesktop);desktop.classList.toggle('active',isDesktop);mobile.setAttribute('aria-pressed',String(!isDesktop));desktop.setAttribute('aria-pressed',String(isDesktop));}
+    mobile.addEventListener('click',()=>mode(false));desktop.addEventListener('click',()=>mode(true));
+  </script>
+</body>
+</html>
