@@ -65,8 +65,17 @@ def catalog():
                 def total(key):
                     values = [v.get(key) for v in focus.values()]
                     return sum(float(v) for v in values if v is not None) if values and any(v is not None for v in values) else None
-                spend, purchases, revenue = total('spend'), total('purchases'), total('purchase_value')
+                spend, platform_purchases, platform_revenue = total('spend'), total('purchases'), total('purchase_value')
                 shopify = data.get('shopify', {})
+                # Since the 2026-09-04 attribution revision, the report headline uses
+                # Shopify-confirmed Meta-channel orders and sales. Keep old fields as
+                # a fallback for reports created with the earlier schema.
+                purchases = shopify.get('meta_attributed_orders')
+                if purchases is None:
+                    purchases = shopify.get('campaign_utm_orders', platform_purchases)
+                revenue = shopify.get('meta_net_sales')
+                if revenue is None:
+                    revenue = shopify.get('campaign_net_sales', platform_revenue)
                 files = {name: f'/reports/{kind}/{folder.name}/{filename}' for name, filename in [('html', 'report.html'), ('preview', 'report-preview.png')] if (folder / filename).is_file()}
                 reports.append({
                     'id': f'{kind}-{folder.name}', 'kind': kind, 'date': date,
@@ -81,8 +90,10 @@ def catalog():
                     'metaRoas': revenue / spend if spend and revenue is not None else None,
                     'metaCpa': spend / purchases if purchases and spend is not None else None,
                     'shopifyOrders': shopify.get('all_orders'),
-                    'campaignOrders': shopify.get('campaign_utm_orders'),
-                    'campaignNetSales': shopify.get('campaign_net_sales'),
+                    'campaignOrders': purchases,
+                    'campaignNetSales': revenue,
+                    'platformMetaPurchases': platform_purchases,
+                    'platformMetaPurchaseValue': platform_revenue,
                     'adScope': list(focus), 'status': 'ready', 'writesPerformed': False,
                     'files': files,
                 })
