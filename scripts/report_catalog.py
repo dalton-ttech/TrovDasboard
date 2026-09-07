@@ -44,6 +44,14 @@ class ReportText(HTMLParser):
 def read_json(path):
     return json.loads(path.read_text(encoding='utf-8-sig'))
 
+def completed_window(manifest):
+    """Reject a report whose source window has not ended yet."""
+    value = (manifest.get('window') or {}).get('shopify_end_exclusive')
+    if not value:
+        return True
+    end = dt.datetime.fromisoformat(value.replace('Z', '+00:00'))
+    return end.tzinfo is not None and end.astimezone(dt.timezone.utc) <= dt.datetime.now(dt.timezone.utc)
+
 def catalog():
     reports, skipped = [], []
     for kind in ('daily', 'weekly'):
@@ -52,7 +60,8 @@ def catalog():
             try:
                 manifest = read_json(manifest_path)
                 folder = manifest_path.parent
-                if manifest.get('status') != 'ready' or manifest.get('writes_performed') is not False:
+                if (manifest.get('status') != 'ready' or manifest.get('writes_performed') is not False
+                        or not completed_window(manifest)):
                     continue
                 data = read_json(folder / 'data.json')
                 html = (folder / 'report.html').read_text(encoding='utf-8-sig')

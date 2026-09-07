@@ -12,6 +12,10 @@ import report_catalog
 
 
 class ReportCatalogTests(unittest.TestCase):
+    def test_incomplete_source_window_is_rejected(self):
+        manifest = {'window': {'shopify_end_exclusive': '2099-01-01T00:00:00-08:00'}}
+        self.assertFalse(report_catalog.completed_window(manifest))
+
     def test_preview_prefers_current_meta_attribution_fields(self):
         with tempfile.TemporaryDirectory(dir=PROJECT / '.tmp') as folder:
             root = Path(folder)
