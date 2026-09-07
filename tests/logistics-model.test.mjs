@@ -49,3 +49,8 @@ test('delay thresholds use Shopify estimated delivery and distinguish missing st
   const [unknown] = M.merge([],snapshot([{id:'2',displayStatus:'UNKNOWN'}]));
   assert.equal(M.classify(unknown,at).level,'REVIEW');
 });
+test('uses Shopify fulfillment creation as the live logistics cohort date', () => {
+  const [s] = M.merge([], snapshot([{ id:'new', displayStatus:'CONFIRMED', orderCreatedAt:'2026-09-05T23:10:59Z', fulfillmentCreatedAt:'2026-09-06T08:06:51Z' }]));
+  assert.equal(s.cohortAt, '2026-09-06T08:06:51Z');
+  assert.equal(s.cohortSource, 'shopify_fulfillment');
+});

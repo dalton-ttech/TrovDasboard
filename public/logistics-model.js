@@ -17,7 +17,9 @@
         quantity: original?.quantity ?? (live.trackingCount === 1 ? live.fulfillmentQuantity : null),
         status: confirmed ? '派送成功' : labels[live.displayStatus] ?? (['CONFIRMED', 'LABEL_PRINTED', 'LABEL_PURCHASED'].includes(live.displayStatus) ? null : '状态待核实'),
         isLive: true, source: 'shopify', historyStatus: original?.historyStatus ?? null,
-        dataConflict: !confirmed && original?.historyStatus === '派送成功', cohortAt: live.orderCreatedAt || original?.createdAt,
+        dataConflict: !confirmed && original?.historyStatus === '派送成功',
+        cohortAt: live.fulfillmentCreatedAt || live.orderCreatedAt || original?.createdAt,
+        cohortSource: live.fulfillmentCreatedAt ? 'shopify_fulfillment' : live.orderCreatedAt ? 'shopify_order' : 'oms',
       });
     }
     return [...rows.values()];
