@@ -173,6 +173,7 @@ def command_output(
 ) -> str:
     merged = os.environ.copy()
     merged['PYTHONDONTWRITEBYTECODE'] = '1'
+    merged['PYTHONUTF8'] = '1'
     merged['GIT_TERMINAL_PROMPT'] = '0'
     if env:
         merged.update(env)
@@ -182,6 +183,8 @@ def command_output(
         env=merged,
         capture_output=True,
         text=True,
+        encoding='utf-8',
+        errors='replace',
         check=False,
         timeout=timeout,
         creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
