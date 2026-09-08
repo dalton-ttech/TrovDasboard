@@ -22,7 +22,7 @@ python -B scripts\run_daily_publish.py
 2. 检查最后一份有效日报，补齐截至最近完整太平洋自然日的缺失日期。
 3. 检查最近完整周日对应的周报；缺失或无效时重新生成。
 4. 在本机生成并校验每份报告的 HTML、PDF 和 PNG。正常成功时不打开图片做视觉审核。
-5. 只读刷新 Shopify 物流、Shopify 销量及 Meta A02/A03 数据。
+5. 只读刷新 Shopify 物流、Shopify 销量及 Meta A02/A03 数据。不得向 Meta API 请求 A01。
 6. 导出 Cloudflare Pages 静态站。公开目录只包含页面需要的 JS、HTTP headers 与报告 HTML；不上传源 JSON、PDF、PNG、凭证或客户明细。
 7. 只暂存允许的公开文件，提交到 Git 并推送 `main`。
 8. 等待 Cloudflare Pages 部署，并核对线上读取时间、日报、周报和报告页面。
@@ -31,7 +31,7 @@ python -B scripts\run_daily_publish.py
 
 - 报告窗口的 `shopify_end_exclusive` 必须已经过去。
 - `data.json` 的 `generated_at_utc` 必须大于或等于该窗口结束时间。提前抓取的日报或周报即使 manifest 写着 `ready` 也无效，必须重跑。
-- 报告必须保持 `writes_performed: false`，并包含 Meta A02、A03。
+- 报告必须保持 `writes_performed: false`，且 Meta 源数据只能包含 A02、A03；出现 A01 时拒绝发布。
 - 日报长图必须为 1200 像素宽的连续移动端长图；周报预览必须为 1800 × 2400 的 3:4 图片；PDF 必须有有效文件头。
 - 任一步骤失败都停止提交与部署，保留线上上一份有效快照，并报告失败阶段。不得伪造读取时间或把旧数据标记为最新。
 

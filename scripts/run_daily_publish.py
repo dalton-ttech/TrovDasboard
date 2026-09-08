@@ -132,7 +132,7 @@ def validate_report_bundle(
     require(end_exclusive <= now_utc.astimezone(dt.timezone.utc), 'Report source window is still open')
     require(generated_at >= end_exclusive, 'Report was collected before its source window ended')
     ads = ((data.get('meta') or {}).get('ads') or {})
-    require(all(key in ads for key in ('A02', 'A03')), 'A02/A03 report data is incomplete')
+    require(set(ads) == {'A02', 'A03'}, 'Report source must contain only A02/A03')
     html = path_from_manifest(folder, manifest.get('html'), 'report HTML')
     require(html.stat().st_size >= 1024, 'Report HTML is unexpectedly small')
     if require_render:

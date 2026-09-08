@@ -67,6 +67,13 @@ class DailyPublishTests(unittest.TestCase):
             )
             self.assertEqual(result['date'], '2026-09-06')
 
+            data['meta']['ads']['A01'] = {}
+            (folder / 'data.json').write_text(json.dumps(data), encoding='utf-8')
+            with self.assertRaisesRegex(publisher.PublishError, 'only A02/A03'):
+                publisher.validate_report_bundle(
+                    ads_root, 'weekly', dt.date(2026, 9, 6), now_utc=now, require_render=False
+                )
+
 
 if __name__ == '__main__':
     unittest.main()
