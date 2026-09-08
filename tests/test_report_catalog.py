@@ -42,6 +42,16 @@ class ReportCatalogTests(unittest.TestCase):
             self.assertAlmostEqual(item['metaRoas'], 127.5 / 38.6)
             self.assertEqual(item['platformMetaPurchases'], 0)
 
+    def test_report_generated_before_source_window_end_is_rejected(self):
+        manifest = {
+            'window': {'shopify_end_exclusive': '2026-09-04T00:00:00-07:00'}
+        }
+        data = {'generated_at_utc': '2026-09-04T06:59:00+00:00'}
+        self.assertFalse(report_catalog.generated_after_window(manifest, data))
+
+        data['generated_at_utc'] = '2026-09-04T07:00:00+00:00'
+        self.assertTrue(report_catalog.generated_after_window(manifest, data))
+
 
 if __name__ == '__main__':
     unittest.main()
