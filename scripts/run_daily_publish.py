@@ -5,6 +5,7 @@ import argparse
 import contextlib
 import datetime as dt
 import json
+import math
 import os
 from pathlib import Path
 import shutil
@@ -16,7 +17,6 @@ import time
 from typing import Any, Iterator
 import urllib.parse
 import urllib.request
-import uuid
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -99,6 +99,33 @@ def png_dimensions(path: Path) -> tuple[int, int]:
     return struct.unpack('>II', header[16:24])
 
 
+def report_metrics(data: dict[str, Any]) -> dict[str, Any]:
+    ads = ((data.get('meta') or {}).get('ads') or {})
+    spend = 0.0
+    purchase_value = 0.0
+    for key in ('A02', 'A03'):
+        row = ads.get(key) or {}
+        values = {field: row.get(field) for field in ('spend', 'purchase_value')}
+        for field, value in values.items():
+            require(
+                isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value),
+                f'Missing {key} {field}',
+            )
+        spend += float(values['spend'])
+        purchase_value += float(values['purchase_value'])
+    units = (data.get('shopify') or {}).get('shopify_units_sold')
+    require(
+        isinstance(units, (int, float)) and not isinstance(units, bool) and math.isfinite(units) and units >= 0,
+        'Missing Shopify units sold',
+    )
+    require(float(units).is_integer(), 'Shopify units sold must be a whole number')
+    return {
+        'metaSpendUsd': round(spend, 2),
+        'shopifyUnitsSold': int(units),
+        'metaRoas': round(purchase_value / spend, 2) if spend > 0 else None,
+    }
+
+
 def validate_report_bundle(
     ads_root: Path,
     kind: str,
@@ -158,8 +185,11 @@ def validate_report_bundle(
     return {
         'kind': kind,
         'date': end_date.isoformat(),
+        'since': expected_start.isoformat(),
         'generatedAt': data['generated_at_utc'],
         'html': str(html),
+        'publicHtml': f'{LIVE_ROOT}/reports/{kind}/{end_date.isoformat()}/report.html',
+        'metrics': report_metrics(data),
         'reused': True,
     }
 
@@ -249,31 +279,69 @@ def run_dashboard_sources(ads_root: Path) -> dict[str, Any]:
     return results
 
 
-def copy_export_to_public() -> None:
-    require(DIST.is_dir() and (DIST / '.trov-static-export.json').is_file(), 'Managed static export is missing')
-    stage = Path(tempfile.mkdtemp(prefix='public-publish-', dir=ROOT / '.tmp')).resolve()
-    backup = ROOT / '.tmp' / f'public-reports-backup-{uuid.uuid4().hex}'
+def atomic_write_bytes(target: Path, payload: bytes) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(prefix=f'.{target.name}.', dir=target.parent)
+    temporary = Path(temporary_name)
     try:
-        for name in ('data.js', 'runtime.js', '_headers'):
-            shutil.copy2(DIST / name, stage / name)
-        shutil.copytree(DIST / 'reports', stage / 'reports')
-        for name in ('data.js', 'runtime.js', '_headers'):
-            os.replace(stage / name, PUBLIC / name)
-        reports = (PUBLIC / 'reports').resolve()
-        require(reports.is_relative_to(PUBLIC.resolve()), 'Public report directory escaped the workspace')
-        if reports.exists():
-            reports.rename(backup)
-        try:
-            (stage / 'reports').rename(reports)
-        except OSError:
-            if backup.exists():
-                backup.rename(reports)
-            raise
+        with os.fdopen(descriptor, 'wb') as handle:
+            handle.write(payload)
+        os.replace(temporary, target)
     finally:
-        for disposable in (stage, backup):
-            if disposable.exists():
-                require(disposable.resolve().is_relative_to((ROOT / '.tmp').resolve()), 'Cleanup path escaped .tmp')
-                shutil.rmtree(disposable)
+        if temporary.exists():
+            temporary.unlink()
+
+
+def copy_export_to_public(dist: Path = DIST, public: Path = PUBLIC) -> None:
+    dist = dist.resolve()
+    public = public.resolve()
+    require(dist.is_dir() and (dist / '.trov-static-export.json').is_file(), 'Managed static export is missing')
+    require(public.is_dir(), 'Public directory is missing')
+    desired: dict[Path, bytes] = {}
+    for name in ('data.js', 'runtime.js', '_headers'):
+        source = (dist / name).resolve()
+        require(source.is_relative_to(dist) and source.is_file(), f'Missing static export file: {name}')
+        desired[(public / name).resolve()] = source.read_bytes()
+    source_reports = (dist / 'reports').resolve()
+    require(source_reports.is_dir() and source_reports.is_relative_to(dist), 'Static report export is missing')
+    for source in source_reports.rglob('*'):
+        if source.is_file():
+            relative = source.relative_to(source_reports)
+            target = (public / 'reports' / relative).resolve()
+            require(target.is_relative_to(public / 'reports'), 'Public report target escaped its directory')
+            desired[target] = source.read_bytes()
+
+    public_reports = (public / 'reports').resolve()
+    require(public_reports.is_relative_to(public), 'Public report directory escaped the workspace')
+    public_reports.mkdir(parents=True, exist_ok=True)
+    existing_reports = {path.resolve() for path in public_reports.rglob('*') if path.is_file()}
+    report_targets = {path for path in desired if path.is_relative_to(public_reports)}
+    stale_reports = existing_reports - report_targets
+    previous = {
+        target: target.read_bytes() if target.is_file() else None
+        for target in set(desired) | stale_reports
+    }
+    try:
+        for target, payload in desired.items():
+            if previous[target] != payload:
+                atomic_write_bytes(target, payload)
+        for target in stale_reports:
+            target.unlink()
+    except OSError:
+        for target, payload in previous.items():
+            if payload is None:
+                if target.is_file():
+                    target.unlink()
+            else:
+                atomic_write_bytes(target, payload)
+        raise
+    for directory in sorted(
+        (path for path in public_reports.rglob('*') if path.is_dir()),
+        key=lambda path: len(path.parts),
+        reverse=True,
+    ):
+        if not any(directory.iterdir()):
+            directory.rmdir()
 
 
 def git(args: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:

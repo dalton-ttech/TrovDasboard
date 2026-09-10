@@ -49,7 +49,11 @@ class DailyPublishTests(unittest.TestCase):
                 'status': 'ready',
                 'writes_performed': False,
                 'generated_at_utc': '2026-09-07T06:19:00+00:00',
-                'meta': {'ads': {'A02': {}, 'A03': {}}},
+                'meta': {'ads': {
+                    'A02': {'spend': 10, 'purchase_value': 20},
+                    'A03': {'spend': 5, 'purchase_value': 5},
+                }},
+                'shopify': {'shopify_units_sold': 3},
             }
             (folder / 'run-manifest.json').write_text(json.dumps(manifest), encoding='utf-8')
             (folder / 'data.json').write_text(json.dumps(data), encoding='utf-8')
@@ -66,6 +70,15 @@ class DailyPublishTests(unittest.TestCase):
                 ads_root, 'weekly', dt.date(2026, 9, 6), now_utc=now, require_render=False
             )
             self.assertEqual(result['date'], '2026-09-06')
+            self.assertEqual(result['metrics'], {
+                'metaSpendUsd': 15.0,
+                'shopifyUnitsSold': 3,
+                'metaRoas': 1.67,
+            })
+            self.assertEqual(
+                result['publicHtml'],
+                'https://trov-work.pages.dev/reports/weekly/2026-09-06/report.html',
+            )
 
             data['meta']['ads']['A01'] = {}
             (folder / 'data.json').write_text(json.dumps(data), encoding='utf-8')
@@ -73,6 +86,33 @@ class DailyPublishTests(unittest.TestCase):
                 publisher.validate_report_bundle(
                     ads_root, 'weekly', dt.date(2026, 9, 6), now_utc=now, require_render=False
                 )
+
+    def test_public_report_directory_is_updated_in_place(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            dist = root / 'dist'
+            public = root / 'public'
+            (dist / 'reports' / 'daily' / '2026-09-09').mkdir(parents=True)
+            (public / 'reports' / 'daily' / '2026-09-08').mkdir(parents=True)
+            (dist / '.trov-static-export.json').write_text('{}', encoding='utf-8')
+            for name in ('data.js', 'runtime.js', '_headers'):
+                (dist / name).write_text(f'new {name}', encoding='utf-8')
+                (public / name).write_text(f'old {name}', encoding='utf-8')
+            expected = dist / 'reports' / 'daily' / '2026-09-09' / 'report.html'
+            expected.write_text('new report', encoding='utf-8')
+            stale = public / 'reports' / 'daily' / '2026-09-08' / 'report.html'
+            stale.write_text('stale report', encoding='utf-8')
+            reports_identity = (public / 'reports').stat().st_ino
+
+            publisher.copy_export_to_public(dist, public)
+
+            self.assertEqual((public / 'reports').stat().st_ino, reports_identity)
+            self.assertEqual(
+                (public / 'reports' / 'daily' / '2026-09-09' / 'report.html').read_text(encoding='utf-8'),
+                'new report',
+            )
+            self.assertFalse(stale.exists())
+            self.assertEqual((public / 'runtime.js').read_text(encoding='utf-8'), 'new runtime.js')
 
 
 if __name__ == '__main__':
